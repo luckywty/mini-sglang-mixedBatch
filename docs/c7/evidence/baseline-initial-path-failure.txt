@@ -1,0 +1,73 @@
+source: /home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/python/minisgl/core.py
+configuration: {'model': '/home/wty238388/ai-infra/models/Qwen3-0.6B', 'graph_bs': [], 'disable_overlap': True, 'chunk_budget': 16}
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[1m[2026-10-28|18:58:18|core|rank=0][0m [32mINFO    [0m Free memory before loading model: 4.99 GiB
+Loading weights:   0%|          | 0/1 [00:00<?, ?it/s]Loading weights: 100%|██████████| 1/1 [00:08<00:00,  8.40s/it]Loading weights: 100%|██████████| 1/1 [00:08<00:00,  8.40s/it]
+[1m[2026-10-28|18:58:29|core|rank=0][0m [32mINFO    [0m Allocating 512 tokens for KV cache, K + V = 0.05 GiB
+[1m[2026-10-28|18:58:29|core|rank=0][0m [32mINFO    [0m Free memory after initialization: 3.60 GiB
+[1m[2026-10-28|18:58:29|core|rank=0][0m [32mINFO    [0m CUDA graph is disabled.
+batch: prefill uids: [0, 1] query_lens: [5, 11] kv_lens: [5, 11] graph: False
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/scripts/c7/baseline_smoke.py", line 73, in <module>
+[rank0]:     main()
+[rank0]:   File "/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/scripts/c7/baseline_smoke.py", line 56, in main
+[rank0]:     results = llm.generate(
+[rank0]:               ^^^^^^^^^^^^^
+[rank0]:   File "/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/python/minisgl/llm/llm.py", line 90, in generate
+[rank0]:     self.run_forever()
+[rank0]:   File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 120, in decorate_context
+[rank0]:     return func(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/python/minisgl/scheduler/scheduler.py", line 126, in run_forever
+[rank0]:     self.normal_loop()
+[rank0]:   File "/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/python/minisgl/scheduler/scheduler.py", line 116, in normal_loop
+[rank0]:     ongoing_data = (forward_input, self._forward(forward_input))
+[rank0]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/python/minisgl/scheduler/scheduler.py", line 230, in _forward
+[rank0]:     forward_output = self.engine.forward_batch(batch, sample_args)
+[rank0]:                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/scripts/c7/baseline_smoke.py", line 51, in trace_forward
+[rank0]:     return forward(batch, sample_args)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/python/minisgl/engine/engine.py", line 197, in forward_batch
+[rank0]:     logits = self.model.forward()
+[rank0]:              ^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/python/minisgl/models/qwen3.py", line 78, in forward
+[rank0]:     output = self.model.forward(get_global_ctx().batch.input_ids)
+[rank0]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/python/minisgl/models/qwen3.py", line 59, in forward
+[rank0]:     x = self.embed_tokens.forward(input_ids)
+[rank0]:         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/python/minisgl/utils/torch_utils.py", line 33, in wrapper
+[rank0]:     return fn(self, *args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/python/minisgl/layers/embedding.py", line 36, in forward
+[rank0]:     y = indexing(
+[rank0]:         ^^^^^^^^^
+[rank0]:   File "/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/python/minisgl/kernel/index.py", line 48, in indexing
+[rank0]:     module = _jit_index_module(element_size, num_splits=num_splits)
+[rank0]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/python/minisgl/kernel/index.py", line 23, in _jit_index_module
+[rank0]:     return load_jit(
+[rank0]:            ^^^^^^^^^
+[rank0]:   File "/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/python/minisgl/kernel/utils.py", line 120, in load_jit
+[rank0]:     return load_inline(
+[rank0]:            ^^^^^^^^^^^^
+[rank0]:   File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/tvm_ffi/cpp/extension.py", line 1174, in load_inline
+[rank0]:     build_inline(
+[rank0]:   File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/tvm_ffi/cpp/extension.py", line 1016, in build_inline
+[rank0]:     return _build_impl(
+[rank0]:            ^^^^^^^^^^^^
+[rank0]:   File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/tvm_ffi/cpp/extension.py", line 780, in _build_impl
+[rank0]:     build_ninja(str(build_dir))
+[rank0]:   File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/tvm_ffi/cpp/extension.py", line 637, in build_ninja
+[rank0]:     status = subprocess.run(check=False, args=command, cwd=build_dir, capture_output=True)
+[rank0]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home/wty238388/.local/share/uv/python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/subprocess.py", line 548, in run
+[rank0]:     with Popen(*popenargs, **kwargs) as process:
+[rank0]:          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home/wty238388/.local/share/uv/python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/subprocess.py", line 1026, in __init__
+[rank0]:     self._execute_child(args, executable, preexec_fn, close_fds,
+[rank0]:   File "/home/wty238388/.local/share/uv/python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/subprocess.py", line 1955, in _execute_child
+[rank0]:     raise child_exception_type(errno_num, err_msg, err_filename)
+[rank0]: FileNotFoundError: [Errno 2] No such file or directory: 'ninja'

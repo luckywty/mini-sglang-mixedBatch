@@ -1,0 +1,19 @@
+source: /home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/python/minisgl/core.py
+configuration: {'model': '/home/wty238388/ai-infra/models/Qwen3-0.6B', 'graph_bs': [], 'disable_overlap': True, 'chunk_budget': 16}
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[1m[2026-10-28|18:59:12|core|rank=0][0m [32mINFO    [0m Free memory before loading model: 4.99 GiB
+Loading weights:   0%|          | 0/1 [00:00<?, ?it/s]Loading weights: 100%|██████████| 1/1 [00:01<00:00,  1.64s/it]Loading weights: 100%|██████████| 1/1 [00:01<00:00,  1.64s/it]
+[1m[2026-10-28|18:59:15|core|rank=0][0m [32mINFO    [0m Allocating 512 tokens for KV cache, K + V = 0.05 GiB
+[1m[2026-10-28|18:59:15|core|rank=0][0m [32mINFO    [0m Free memory after initialization: 3.60 GiB
+[1m[2026-10-28|18:59:15|core|rank=0][0m [32mINFO    [0m CUDA graph is disabled.
+batch: prefill uids: [0, 1] query_lens: [5, 11] kv_lens: [5, 11] graph: False
+batch: prefill uids: [1] query_lens: [16] kv_lens: [27] graph: False
+batch: prefill uids: [1] query_lens: [16] kv_lens: [43] graph: False
+batch: prefill uids: [1] query_lens: [16] kv_lens: [59] graph: False
+batch: prefill uids: [1] query_lens: [2] kv_lens: [61] graph: False
+batch: decode uids: [0, 1] query_lens: [1, 1] kv_lens: [6, 62] graph: False
+batch: decode uids: [0, 1] query_lens: [1, 1] kv_lens: [7, 63] graph: False
+batch: decode uids: [0, 1] query_lens: [1, 1] kv_lens: [8, 64] graph: False
+outputs: [{'text': ' Paris. The capital', 'token_ids': [12095, 13, 576, 6722]}, {'text': ' Repeat the word hello', 'token_ids': [44801, 279, 3409, 23811]}]
+peak_allocated_bytes: 1423837184
+BASELINE SMOKE PASSED
