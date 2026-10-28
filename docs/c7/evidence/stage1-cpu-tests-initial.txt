@@ -1,0 +1,84 @@
+.............Fatal Python error: Aborted
+
+Current thread 0x00007753f5102740 (most recent call first):
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/torch/cuda/__init__.py", line 182 in is_available
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/torch_c_dlpack_ext/core.py", line 55 in load_torch_c_dlpack_extension
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/torch_c_dlpack_ext/core.py", line 81 in <module>
+  File "<frozen importlib._bootstrap>", line 488 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 999 in exec_module
+  File "<frozen importlib._bootstrap>", line 935 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1331 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1360 in _find_and_load
+  File "<frozen importlib._bootstrap>", line 488 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap>", line 1415 in _handle_fromlist
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/torch_c_dlpack_ext/__init__.py", line 19 in <module>
+  File "<frozen importlib._bootstrap>", line 488 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 999 in exec_module
+  File "<frozen importlib._bootstrap>", line 935 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1331 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1360 in _find_and_load
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/tvm_ffi/_optional_torch_c_dlpack.py", line 119 in load_torch_c_dlpack_extension
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/tvm_ffi/_optional_torch_c_dlpack.py", line 218 in <module>
+  File "<frozen importlib._bootstrap>", line 488 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 999 in exec_module
+  File "<frozen importlib._bootstrap>", line 935 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1331 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1360 in _find_and_load
+  File "<frozen importlib._bootstrap>", line 488 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap>", line 1415 in _handle_fromlist
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/tvm_ffi/__init__.py", line 102 in <module>
+  File "<frozen importlib._bootstrap>", line 488 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 999 in exec_module
+  File "<frozen importlib._bootstrap>", line 935 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1331 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1360 in _find_and_load
+  File "<frozen importlib._bootstrap>", line 488 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap>", line 1310 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1360 in _find_and_load
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/python/minisgl/kernel/utils.py", line 63 in load_aot
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/python/minisgl/kernel/radix.py", line 15 in _load_radix_module
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/python/minisgl/kernel/radix.py", line 20 in fast_compare_key
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/python/minisgl/kvcache/radix_cache.py", line 67 in get_match_len
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/python/minisgl/kvcache/radix_cache.py", line 218 in _tree_walk
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/python/minisgl/kvcache/radix_cache.py", line 133 in match_prefix
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/python/minisgl/scheduler/cache.py", line 30 in match_req
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/python/minisgl/scheduler/prefill.py", line 48 in _try_allocate_one
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/python/minisgl/scheduler/prefill.py", line 108 in try_add_one
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/python/minisgl/scheduler/prefill.py", line 144 in schedule_next_batch
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/python/minisgl/scheduler/mixed.py", line 33 in schedule_mixed_batch
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/python/minisgl/scheduler/scheduler.py", line 232 in _select_next_batch
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/tests/core/test_mixed_scheduler.py", line 253 in test_real_prefix_match_changes_query_length
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/_pytest/python.py", line 167 in pytest_pyfunc_call
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/pluggy/_callers.py", line 121 in _multicall
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/pluggy/_manager.py", line 120 in _hookexec
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/pluggy/_hooks.py", line 512 in __call__
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/_pytest/python.py", line 1707 in runtest
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/_pytest/runner.py", line 184 in pytest_runtest_call
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/pluggy/_callers.py", line 121 in _multicall
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/pluggy/_manager.py", line 120 in _hookexec
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/pluggy/_hooks.py", line 512 in __call__
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/_pytest/runner.py", line 250 in <lambda>
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/_pytest/runner.py", line 361 in from_call
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/_pytest/runner.py", line 249 in call_and_report
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/_pytest/runner.py", line 139 in runtestprotocol
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/_pytest/runner.py", line 118 in pytest_runtest_protocol
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/pluggy/_callers.py", line 121 in _multicall
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/pluggy/_manager.py", line 120 in _hookexec
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/pluggy/_hooks.py", line 512 in __call__
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/_pytest/main.py", line 408 in pytest_runtestloop
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/pluggy/_callers.py", line 121 in _multicall
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/pluggy/_manager.py", line 120 in _hookexec
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/pluggy/_hooks.py", line 512 in __call__
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/_pytest/main.py", line 384 in _main
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/_pytest/main.py", line 330 in wrap_session
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/_pytest/main.py", line 377 in pytest_cmdline_main
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/pluggy/_callers.py", line 121 in _multicall
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/pluggy/_manager.py", line 120 in _hookexec
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/pluggy/_hooks.py", line 512 in __call__
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/_pytest/config/__init__.py", line 229 in _main
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/_pytest/config/__init__.py", line 253 in _console_main
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/pytest/__main__.py", line 9 in <module>
+  File "<frozen runpy>", line 88 in _run_code
+  File "<frozen runpy>", line 198 in _run_module_as_main
+
+Extension modules: numpy._core._multiarray_umath, numpy.linalg._umath_linalg, torch._C, torch._C._dynamo.autograd_compiler, torch._C._dynamo.eval_frame, torch._C._dynamo.guards, torch._C._dynamo.utils, torch._C._fft, torch._C._linalg, torch._C._nested, torch._C._nn, torch._C._sparse, torch._C._special, charset_normalizer.md, charset_normalizer.cd, requests.packages.charset_normalizer.md, requests.packages.chardet.md, requests.packages.charset_normalizer.cd, requests.packages.chardet.cd, yaml._yaml, regex._regex, markupsafe._speedups, numpy.random._common, numpy.random.bit_generator, numpy.random._bounded_integers, numpy.random._pcg64, numpy.random._generator, numpy.random._mt19937, numpy.random._philox, numpy.random._sfc64, numpy.random.mtrand, msgpack._cmsgpack, zmq.backend.cython._zmq, cuda.bindings._internal.utils, cuda.bindings._internal.driver, cuda.bindings.cydriver, cuda.bindings.driver, tvm_ffi.core (total: 38)

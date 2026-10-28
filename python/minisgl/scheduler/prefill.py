@@ -21,6 +21,10 @@ logger = init_logger(__name__)
 
 
 class ChunkedReq(Req):
+    @property
+    def needs_sampling(self) -> bool:
+        return False
+
     def append_host(self, next_token: torch.Tensor) -> None:
         raise NotImplementedError("ChunkedReq should not be sampled")
 

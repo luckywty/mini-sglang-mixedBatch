@@ -19,8 +19,8 @@ def main() -> None:
     args = parser.parse_args()
     os.environ["MINISGL_DISABLE_OVERLAP_SCHEDULING"] = str(int(args.disable_overlap))
 
-    import torch
     import minisgl.core
+    import torch
     from minisgl.core import SamplingParams
     from minisgl.llm import LLM
 
@@ -41,11 +41,16 @@ def main() -> None:
 
     def trace_forward(batch, sample_args):
         print(
-            "batch:", batch.phase,
-            "uids:", [req.uid for req in batch.reqs],
-            "query_lens:", [req.extend_len for req in batch.reqs],
-            "kv_lens:", [req.device_len for req in batch.reqs],
-            "graph:", llm.engine.graph_runner.can_use_cuda_graph(batch),
+            "batch:",
+            batch.phase,
+            "uids:",
+            [req.uid for req in batch.reqs],
+            "query_lens:",
+            [req.extend_len for req in batch.reqs],
+            "kv_lens:",
+            [req.device_len for req in batch.reqs],
+            "graph:",
+            llm.engine.graph_runner.can_use_cuda_graph(batch),
             flush=True,
         )
         return forward(batch, sample_args)

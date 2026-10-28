@@ -1,0 +1,66 @@
+..........................FF..........................                   [100%]
+=================================== FAILURES ===================================
+______ test_pending_and_partial_abort_release_once_and_reuse_slot[False] _______
+
+make_scheduler = <function make_scheduler.<locals>.make at 0x7c04db069a80>
+partial = False
+
+    @pytest.mark.parametrize("partial", [False, True])
+    def test_pending_and_partial_abort_release_once_and_reuse_slot(make_scheduler, partial):
+        scheduler = make_scheduler(3, slots=1, cache_type="radix")
+        add_prefill(scheduler, 1, 10)
+        if partial:
+            batch = scheduler._select_next_batch()
+            advance_request_state(scheduler, batch)
+            assert scheduler.table_manager.available_size == 0
+>       scheduler._process_one_msg(AbortBackendMsg(1))
+
+tests/core/test_mixed_scheduler.py:411:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+python/minisgl/scheduler/scheduler.py:199: in _process_one_msg
+    logger.debug_rank0("Aborting request %d", msg.uid)
+python/minisgl/utils/logger.py:107: in _call_rank0
+    tp_info = tp_info or get_tp_info()
+                         ^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def get_tp_info() -> DistributedInfo:
+        if _TP_INFO is None:
+>           raise RuntimeError("TP info has not been set")
+E           RuntimeError: TP info has not been set
+
+python/minisgl/distributed/info.py:30: RuntimeError
+_______ test_pending_and_partial_abort_release_once_and_reuse_slot[True] _______
+
+make_scheduler = <function make_scheduler.<locals>.make at 0x7c04dafb5e40>
+partial = True
+
+    @pytest.mark.parametrize("partial", [False, True])
+    def test_pending_and_partial_abort_release_once_and_reuse_slot(make_scheduler, partial):
+        scheduler = make_scheduler(3, slots=1, cache_type="radix")
+        add_prefill(scheduler, 1, 10)
+        if partial:
+            batch = scheduler._select_next_batch()
+            advance_request_state(scheduler, batch)
+            assert scheduler.table_manager.available_size == 0
+>       scheduler._process_one_msg(AbortBackendMsg(1))
+
+tests/core/test_mixed_scheduler.py:411:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+python/minisgl/scheduler/scheduler.py:199: in _process_one_msg
+    logger.debug_rank0("Aborting request %d", msg.uid)
+python/minisgl/utils/logger.py:107: in _call_rank0
+    tp_info = tp_info or get_tp_info()
+                         ^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def get_tp_info() -> DistributedInfo:
+        if _TP_INFO is None:
+>           raise RuntimeError("TP info has not been set")
+E           RuntimeError: TP info has not been set
+
+python/minisgl/distributed/info.py:30: RuntimeError
+=========================== short test summary info ============================
+FAILED tests/core/test_mixed_scheduler.py::test_pending_and_partial_abort_release_once_and_reuse_slot[False]
+FAILED tests/core/test_mixed_scheduler.py::test_pending_and_partial_abort_release_once_and_reuse_slot[True]
+2 failed, 52 passed in 3.38s

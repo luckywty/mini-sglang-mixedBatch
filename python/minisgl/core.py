@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from contextlib import contextmanager
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, List, Literal
+from typing import TYPE_CHECKING, List, Literal, Tuple, TypeAlias
 
 import torch
 
@@ -10,6 +10,9 @@ if TYPE_CHECKING:
     from minisgl.attention import BaseAttnBackend, BaseAttnMetadata
     from minisgl.kvcache import BaseCacheHandle, BaseKVCachePool
     from minisgl.moe import BaseMoeBackend
+
+
+RequestPhase: TypeAlias = Literal["prefill", "decode"]
 
 
 @dataclass
@@ -60,6 +63,11 @@ class Req:
     def can_decode(self) -> bool:
         return self.remain_len > 0
 
+    @property
+    def needs_sampling(self) -> bool:
+        """Decode and the final prefill chunk produce an output token."""
+        return True
+
     def __repr__(self) -> str:
         return (
             f"{type(self)}(table_idx={self.table_idx}, "
@@ -68,10 +76,86 @@ class Req:
         )
 
 
+@dataclass(frozen=True)
+class BatchLayout:
+    """Unpadded CPU layout captured before shared Req state advances.
+
+    Sampling rows are ordered by request, with intermediate prefill chunks omitted.
+    This is an execution contract for the future mixed executor, not GPU metadata.
+    """
+
+    request_uids: Tuple[int, ...]
+    table_indices: Tuple[int, ...]
+    req_phases: Tuple[RequestPhase, ...]
+    query_lens: Tuple[int, ...]
+    kv_lens: Tuple[int, ...]
+    sample_mask: Tuple[bool, ...]
+
+    def __post_init__(self) -> None:
+        size = len(self.request_uids)
+        if not size or any(
+            len(values) != size
+            for values in (
+                self.table_indices,
+                self.req_phases,
+                self.query_lens,
+                self.kv_lens,
+                self.sample_mask,
+            )
+        ):
+            raise ValueError("Batch layout requires nonempty, equally sized request fields")
+        if len(set(self.request_uids)) != size or len(set(self.table_indices)) != size:
+            raise ValueError("A scheduled request UID and table slot must each be unique")
+        for phase, q_len, kv_len, sample in zip(
+            self.req_phases, self.query_lens, self.kv_lens, self.sample_mask
+        ):
+            if phase not in ("prefill", "decode") or not 0 < q_len <= kv_len:
+                raise ValueError("Invalid request phase or query/KV length")
+            if phase == "decode" and (q_len != 1 or not sample):
+                raise ValueError("Each decode request must compute one token and sample")
+
+    @classmethod
+    def capture(cls, reqs: List[Req], req_phases: Tuple[RequestPhase, ...]) -> BatchLayout:
+        return cls(
+            request_uids=tuple(req.uid for req in reqs),
+            table_indices=tuple(req.table_idx for req in reqs),
+            req_phases=req_phases,
+            query_lens=tuple(req.extend_len for req in reqs),
+            kv_lens=tuple(req.device_len for req in reqs),
+            sample_mask=tuple(req.needs_sampling for req in reqs),
+        )
+
+    @property
+    def num_tokens(self) -> int:
+        return sum(self.query_lens)
+
+    @property
+    def cached_lens(self) -> Tuple[int, ...]:
+        return tuple(k - q for q, k in zip(self.query_lens, self.kv_lens))
+
+    @property
+    def qo_indptr(self) -> Tuple[int, ...]:
+        from itertools import accumulate
+
+        return (0, *accumulate(self.query_lens))
+
+    @property
+    def sample_req_indices(self) -> Tuple[int, ...]:
+        """Compressed sampling/output row -> unpadded batch request row."""
+        return tuple(i for i, sample in enumerate(self.sample_mask) if sample)
+
+    @property
+    def sample_token_indices(self) -> Tuple[int, ...]:
+        """Packed hidden-state rows for requests that actually produce a token."""
+        return tuple(end - 1 for end, sample in zip(self.qo_indptr[1:], self.sample_mask) if sample)
+
+
 @dataclass
 class Batch:
     reqs: List[Req]
-    phase: Literal["prefill", "decode"]
+    phase: Literal["prefill", "decode", "mixed"]
+    # Only the opt-in mixed scheduling path takes a CPU snapshot (including pure batches).
+    layout: BatchLayout | None = None
     # these fields should be set by scheduler
     input_ids: torch.Tensor = field(init=False)
     positions: torch.Tensor = field(init=False)
@@ -87,6 +171,10 @@ class Batch:
     @property
     def is_decode(self) -> bool:
         return self.phase == "decode"
+
+    @property
+    def is_mixed(self) -> bool:
+        return self.phase == "mixed"
 
     @property
     def size(self) -> int:

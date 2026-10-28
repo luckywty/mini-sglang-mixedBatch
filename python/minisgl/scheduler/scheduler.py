@@ -19,6 +19,7 @@ from .cache import CacheManager
 from .config import SchedulerConfig
 from .decode import DecodeManager
 from .io import SchedulerIOMixin
+from .mixed import schedule_mixed_batch
 from .prefill import ChunkedReq, PrefillManager
 from .table import TableManager
 
@@ -44,6 +45,12 @@ ForwardData: TypeAlias = "Tuple[ForwardInput, ForwardOutput]"
 
 class Scheduler(SchedulerIOMixin):
     def __init__(self, config: SchedulerConfig):
+        if config.enable_mixed_batching:
+            raise NotImplementedError(
+                "C7 stage 1 implements mixed batch selection only. "
+                "Mixed execution requires attention, sampling and output handling from stages 2-3. "
+                "Leave enable_mixed_batching=False to run the baseline."
+            )
         from minisgl.engine import Engine
 
         self.engine = Engine(config)
@@ -70,6 +77,7 @@ class Scheduler(SchedulerIOMixin):
         self.eos_token_id = self.tokenizer.eos_token_id
         self.token_pool = self.table_manager.token_pool
         self.prefill_budget = config.max_extend_tokens
+        self.enable_mixed_batching = config.enable_mixed_batching
         # self.config = config
 
         # Initialize the I/O mixin
@@ -202,6 +210,10 @@ class Scheduler(SchedulerIOMixin):
         self.cache_manager.cache_req(req, finished=True)
 
     def _prepare_batch(self, batch: Batch) -> ForwardInput:
+        if batch.is_mixed or batch.layout is not None:
+            raise NotImplementedError(
+                "C7 mixed scheduling layouts cannot execute before stages 2-3"
+            )
         self.engine.graph_runner.pad_batch(batch)
         self.cache_manager.allocate_paged(batch.reqs)
         batch.positions = _make_positions(batch, self.device)
@@ -216,12 +228,19 @@ class Scheduler(SchedulerIOMixin):
             write_tuple=write_mapping,
         )
 
-    def _schedule_next_batch(self) -> ForwardInput | None:
-        # TODO: support other policies: e.g. DECODE first
-        batch = (
+    def _select_next_batch(self) -> Batch | None:
+        """CPU selection boundary, also usable without constructing a GPU Engine."""
+        if self.enable_mixed_batching:
+            return schedule_mixed_batch(
+                self.decode_manager, self.prefill_manager, self.prefill_budget
+            )
+        return (
             self.prefill_manager.schedule_next_batch(self.prefill_budget)
             or self.decode_manager.schedule_next_batch()
         )
+
+    def _schedule_next_batch(self) -> ForwardInput | None:
+        batch = self._select_next_batch()
         return self._prepare_batch(batch) if batch else None
 
     def _forward(self, forward_input: ForwardInput) -> ForwardOutput:

@@ -26,18 +26,27 @@ def main() -> None:
         print("command:", args, flush=True)
         subprocess.run(args, check=True)
     for name in [
-        "torch", "flashinfer-python", "flashinfer-cubin", "flashinfer-jit-cache",
-        "transformers", "triton", "pytest", "pytest-cov", "apache-tvm-ffi",
-        "sgl-kernel", "quack-kernels", "minisgl",
+        "torch",
+        "flashinfer-python",
+        "flashinfer-cubin",
+        "flashinfer-jit-cache",
+        "transformers",
+        "triton",
+        "pytest",
+        "pytest-cov",
+        "apache-tvm-ffi",
+        "sgl-kernel",
+        "quack-kernels",
+        "minisgl",
     ]:
         try:
             print(name, metadata.version(name))
         except metadata.PackageNotFoundError:
             print(name, "NOT INSTALLED")
 
-    import torch
     import flashinfer
     import minisgl.core
+    import torch
 
     print("source:", minisgl.core.__file__)
     print("torch CUDA:", torch.version.cuda, "available:", torch.cuda.is_available())
