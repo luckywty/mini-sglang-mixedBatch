@@ -188,6 +188,9 @@ class FlashInferBackend(BaseAttnBackend):
         return metadata.wrapper.run(q=q, paged_kv_cache=kv_cache)
 
     def prepare_metadata(self, batch: Batch) -> None:
+        if batch.is_mixed:
+            self._prepare_mixed_metadata(batch)
+            return
         reqs = batch.padded_reqs
 
         padded_size = len(reqs)
@@ -222,6 +225,69 @@ class FlashInferBackend(BaseAttnBackend):
             seq_lens_cpu=seq_len_cpu,
             dtype=self.kvcache.dtype,
             wrapper=self.decode_wrappers if batch.is_decode else self.prefill_wrapper,
+        )
+
+    def _prepare_mixed_metadata(self, batch: Batch) -> None:
+        """Use the unpadded scheduling snapshot for eager paged prefill attention.
+
+        The scheduler execution gate remains in place until sampling/output handling
+        is implemented. This entry is also used by isolated attention validation.
+        """
+        ctx, layout = get_global_ctx(), batch.layout
+        if ctx.page_size != 1 or get_tp_info().size != 1:
+            raise ValueError("Mixed FlashInfer attention requires page_size=1 and TP=1")
+        if layout is None:
+            raise ValueError("Mixed attention requires a scheduling layout")
+        if batch.padded_reqs != batch.reqs:
+            raise ValueError("Mixed attention must be eager and unpadded")
+        if set(layout.req_phases) != {"prefill", "decode"}:
+            raise ValueError("Mixed attention requires both prefill and decode requests")
+        if (
+            layout.request_uids != tuple(req.uid for req in batch.reqs)
+            or layout.table_indices != tuple(req.table_idx for req in batch.reqs)
+            or layout.query_lens != tuple(req.extend_len for req in batch.reqs)
+            or layout.kv_lens != tuple(req.device_len for req in batch.reqs)
+        ):
+            raise ValueError("Mixed attention layout no longer matches the scheduled requests")
+
+        page_table = ctx.page_table
+        if (
+            min(layout.table_indices) < 0
+            or max(layout.table_indices) >= page_table.shape[0]
+            or max(layout.kv_lens) > page_table.shape[1]
+            or sum(layout.kv_lens) >= 2**31
+        ):
+            raise ValueError("Mixed attention table indices or lengths exceed metadata bounds")
+        if (
+            batch.positions.numel() != layout.num_tokens
+            or batch.out_loc.numel() != layout.num_tokens
+        ):
+            raise ValueError(
+                "Mixed positions and KV write locations must match packed query length"
+            )
+
+        CPU_KWARGS = {"device": "cpu", "dtype": torch.int32, "pin_memory": True}
+        cu_seqlens_q_cpu = torch.tensor(layout.qo_indptr, **CPU_KWARGS)
+        cu_seqlens_k_cpu = torch.tensor([0, *layout.kv_lens], **CPU_KWARGS).cumsum_(dim=0)
+        batch.attn_metadata = FIMetadata(
+            cu_seqlens_q_cpu=cu_seqlens_q_cpu,
+            cu_seqlens_k_cpu=cu_seqlens_k_cpu,
+            cu_seqlens_q_gpu=cu_seqlens_q_cpu.to(self.device, non_blocking=True),
+            indices=torch.cat(
+                [
+                    page_table[slot, :length]
+                    for slot, length in zip(layout.table_indices, layout.kv_lens)
+                ]
+            ),
+            last_page_len_cpu=self._get_ones_cpu(batch.size),
+            num_qo_heads=self.qo_head_local,
+            num_kv_heads=self.kv_head_local,
+            head_dim=self.config.head_dim,
+            page_size=1,
+            pos_encoding_mode="NONE",
+            seq_lens_cpu=torch.tensor(layout.kv_lens, **CPU_KWARGS),
+            dtype=self.kvcache.dtype,
+            wrapper=self.prefill_wrapper,
         )
 
     def init_capture_graph(self, max_seq_len: int, bs_list: List[int]) -> None:

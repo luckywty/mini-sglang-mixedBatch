@@ -1,0 +1,2 @@
+Original baseline -> stage 2 (eager-no-overlap): batch trace, outputs, memory peaks and completion checks MATCH
+Original baseline -> stage 2 (graph-overlap): batch trace, outputs, memory peaks and completion checks MATCH

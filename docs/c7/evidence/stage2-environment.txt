@@ -1,0 +1,60 @@
+time: 2026-10-28T20:35:56.487178+08:00
+platform: Linux-6.18.40.1-microsoft-standard-WSL2-x86_64-with-glibc2.39
+python: 3.12.14 (main, Sep  1 2026, 14:16:52) [Clang 22.1.3 ] /home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/bin/python
+PYTHONPATH: /home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/python
+command: ['git', 'rev-parse', 'HEAD']
+b4d2d7aa0bfa181979f552daec6331b87d041781
+command: ['git', 'status', '--short', '--branch']
+## c7/mixed-batching-stage1
+?? docs/c7/evidence/stage2-environment.txt
+command: ['nvidia-smi']
+Wed Oct 28 20:35:56 2026
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 575.64.04              Driver Version: 577.00         CUDA Version: 12.9     |
+|-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA GeForce RTX 3060 ...    On  |   00000000:01:00.0  On |                  N/A |
+| N/A   45C    P8             12W /   75W |    1808MiB /   6144MiB |      7%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+command: ['/usr/local/cuda/bin/nvcc', '--version']
+nvcc: NVIDIA (R) Cuda compiler driver
+Copyright (c) 2005-2025 NVIDIA Corporation
+Built on Fri_Feb_21_20:23:50_PST_2025
+Cuda compilation tools, release 12.8, V12.8.93
+Build cuda_12.8.r12.8/compiler.35583870_0
+torch 2.9.1
+flashinfer-python 0.6.16.post3
+flashinfer-cubin NOT INSTALLED
+flashinfer-jit-cache NOT INSTALLED
+transformers 4.57.3
+triton 3.5.1
+pytest 9.1.1
+pytest-cov 7.1.0
+apache-tvm-ffi 0.1.14.post1
+sgl-kernel 0.3.21
+quack-kernels 0.6.5
+minisgl 0.1.0
+source: /home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/python/minisgl/core.py
+torch CUDA: 12.8 available: True
+GPU: NVIDIA GeForce RTX 3060 Laptop GPU
+SM: (8, 6) BF16: True
+BatchPrefillWithPagedKVCacheWrapper source: /home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/flashinfer/prefill.py
+__init__ (self, float_workspace_buffer: torch.Tensor, kv_layout: str = 'NHD', use_cuda_graph: bool = False, qo_indptr_buf: Optional[torch.Tensor] = None, paged_kv_indptr_buf: Optional[torch.Tensor] = None, paged_kv_indices_buf: Optional[torch.Tensor] = None, paged_kv_last_page_len_buf: Optional[torch.Tensor] = None, custom_mask_buf: Optional[torch.Tensor] = None, mask_indptr_buf: Optional[torch.Tensor] = None, backend: str = 'auto', jit_args: Optional[List[Any]] = None, jit_kwargs: Optional[Dict[str, Any]] = None) -> None
+plan (self, qo_indptr: torch.Tensor, paged_kv_indptr: torch.Tensor, paged_kv_indices: torch.Tensor, paged_kv_last_page_len: torch.Tensor, num_qo_heads: int, num_kv_heads: int, head_dim_qk: int, page_size: int, head_dim_vo: Optional[int] = None, custom_mask: Optional[torch.Tensor] = None, packed_custom_mask: Optional[torch.Tensor] = None, causal: bool = False, pos_encoding_mode: str = 'NONE', use_fp16_qk_reduction: bool = False, sm_scale: Optional[float] = None, window_left: int = -1, logits_soft_cap: Optional[float] = None, rope_scale: Optional[float] = None, rope_theta: Optional[float] = None, q_data_type: Union[str, torch.dtype] = 'float16', kv_data_type: Union[str, torch.dtype, NoneType] = None, o_data_type: Union[str, torch.dtype, NoneType] = None, non_blocking: bool = True, prefix_len_ptr: Optional[torch.Tensor] = None, token_pos_in_items_ptr: Optional[torch.Tensor] = None, token_pos_in_items_len: int = 0, max_item_len_ptr: Optional[torch.Tensor] = None, seq_lens: Optional[torch.Tensor] = None, seq_lens_q: Optional[torch.Tensor] = None, block_tables: Optional[torch.Tensor] = None, max_token_per_sequence: Optional[int] = None, max_sequence_kv: Optional[int] = None, fixed_split_size: Optional[int] = None, disable_split_kv: bool = False) -> None
+run (self, q: torch.Tensor, paged_kv_cache: Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]], *args, q_scale: Union[float, torch.Tensor, NoneType] = None, k_scale: Union[float, torch.Tensor, NoneType] = None, v_scale: Union[float, torch.Tensor, NoneType] = None, out: Optional[torch.Tensor] = None, lse: Optional[torch.Tensor] = None, return_lse: bool = False, enable_pdl: Optional[bool] = None, window_left: Optional[int] = None, sinks: Optional[torch.Tensor] = None, kv_cache_sf: Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor], NoneType] = None, skip_softmax_threshold_scale_factor: Optional[float] = None) -> Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]
+BatchDecodeWithPagedKVCacheWrapper source: /home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/flashinfer/decode.py
+__init__ (self, float_workspace_buffer: torch.Tensor, kv_layout: str = 'NHD', use_cuda_graph: bool = False, use_tensor_cores: bool = False, paged_kv_indptr_buffer: Optional[torch.Tensor] = None, paged_kv_indices_buffer: Optional[torch.Tensor] = None, paged_kv_last_page_len_buffer: Optional[torch.Tensor] = None, backend: str = 'auto', jit_args: Optional[List[Any]] = None) -> None
+plan (self, indptr: torch.Tensor, indices: torch.Tensor, last_page_len: torch.Tensor, num_qo_heads: int, num_kv_heads: int, head_dim: int, page_size: int, *deprecated_positional_args: Any, **kwargs: Any) -> None
+run (self, q: torch.Tensor, paged_kv_cache: Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]], *args, q_scale: Optional[float] = None, k_scale: Optional[float] = None, v_scale: Optional[float] = None, out: Optional[torch.Tensor] = None, lse: Optional[torch.Tensor] = None, return_lse: bool = False, enable_pdl: Optional[bool] = None, window_left: Optional[int] = None, sinks: Optional[torch.Tensor] = None, q_len_per_req: Optional[int] = None, skip_softmax_threshold_scale_factor: Optional[float] = None, kv_cache_sf: Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor], NoneType] = None) -> Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]
