@@ -1,0 +1,9 @@
+{"command": ["uvx", "--offline", "--from", "black==24.10.0", "black", "--check", "benchmark/c7", "tests/benchmark/test_c7_benchmark.py"], "exit_code": 0, "stdout": "", "stderr": "All done! \u2728 \ud83c\udf70 \u2728\n7 files would be left unchanged.\n"}
+{"command": ["uvx", "--offline", "--from", "ruff==0.11.7", "ruff", "check", "benchmark/c7", "tests/benchmark/test_c7_benchmark.py"], "exit_code": 0, "stdout": "All checks passed!\n", "stderr": ""}
+{"command": ["/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/bin/python", "-m", "compileall", "-q", "benchmark/c7", "tests/benchmark/test_c7_benchmark.py"], "exit_code": 0, "stdout": "", "stderr": ""}
+{"command": ["git", "diff", "--check"], "exit_code": 0, "stdout": "", "stderr": ""}
+{"command": ["git", "diff", "--exit-code", "8d4196a", "--", "python/"], "exit_code": 0, "stdout": "", "stderr": ""}
+{"command": ["diff", "-u", "docs/c7/evidence/dependencies.txt", "docs/c7/evidence/stage5-dependencies.txt"], "exit_code": 0, "stdout": "", "stderr": ""}
+{"document": "docs/c7/stage5-results.md", "resolved_local_links": 24}
+{"document": "benchmark/c7/README.md", "resolved_local_links": 1}
+C7_STAGE5_CHECKS_PASS

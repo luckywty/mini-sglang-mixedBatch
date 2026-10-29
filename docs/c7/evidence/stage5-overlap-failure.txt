@@ -1,0 +1,253 @@
+{
+  "purpose": "Observed native baseline overlap HTTP failure; not a performance result",
+  "plan_sha256": "76a664ee082f4f583d893b4c73103e0e9681078610cf4f7de2ab06e829b0a1b5",
+  "server": {
+    "context": 128,
+    "slots": 3,
+    "pages": 768,
+    "budget": 7,
+    "graph": 4,
+    "overlap": true,
+    "cache": "radix"
+  },
+  "expected_warmup_outputs": {
+    "warmup-0": 9,
+    "warmup-1": 8
+  },
+  "run": {
+    "schema": "c7-run-v1",
+    "plan_sha256": "76a664ee082f4f583d893b4c73103e0e9681078610cf4f7de2ab06e829b0a1b5",
+    "kind": "smoke_correctness",
+    "scenario": "interference",
+    "policy": "baseline",
+    "repeat": 0,
+    "mode": "profile",
+    "nsys": false,
+    "command": [
+      "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/bin/python",
+      "-u",
+      "/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/benchmark/c7/server.py",
+      "--model",
+      "/home/wty238388/ai-infra/models/Qwen3-0.6B",
+      "--dtype",
+      "bfloat16",
+      "--attention-backend",
+      "fi",
+      "--page-size",
+      "1",
+      "--tp-size",
+      "1",
+      "--host",
+      "127.0.0.1",
+      "--port",
+      "47193",
+      "--max-running-requests",
+      "3",
+      "--max-seq-len-override",
+      "128",
+      "--num-pages",
+      "768",
+      "--max-extend-length",
+      "7",
+      "--graph",
+      "4",
+      "--cache-type",
+      "radix"
+    ],
+    "max_clients": 256,
+    "timeout_s": 120,
+    "status": "FAILED",
+    "errors": [
+      "RuntimeError: Warmup failed; measured load was not started"
+    ],
+    "warmup_exit": 1,
+    "server_exit": 0,
+    "telemetry_exit": 0
+  },
+  "warmup_client": {
+    "epoch_perf_counter": 4505.898254329,
+    "results": [
+      {
+        "id": "warmup-0",
+        "sent_s": 0.000443031000031624,
+        "end_s": 0.25925861399991845,
+        "server_uid": 1,
+        "token_times_s": [
+          0.20503361299961398,
+          0.20941231899996637,
+          0.2182538580000255,
+          0.22503750199939532,
+          0.233487062999302,
+          0.24104465799973696,
+          0.2570451569999932,
+          0.2591438769995875
+        ],
+        "role_count": 1,
+        "finish_count": 1,
+        "done_count": 1,
+        "error": "ValueError: Output length differs from frozen ignore_eos workload"
+      },
+      {
+        "id": "warmup-1",
+        "sent_s": 0.0009987149996959488,
+        "end_s": 0.25735367800007225,
+        "server_uid": 0,
+        "token_times_s": [
+          0.18730714799949055,
+          0.20932708100008313,
+          0.21814308899956814,
+          0.22513398899991444,
+          0.2336002109996116,
+          0.24112409999997908,
+          0.2571552919998794
+        ],
+        "role_count": 1,
+        "finish_count": 1,
+        "done_count": 1,
+        "error": "ValueError: Output length differs from frozen ignore_eos workload"
+      }
+    ],
+    "plan_sha256": "76a664ee082f4f583d893b4c73103e0e9681078610cf4f7de2ab06e829b0a1b5",
+    "scenario": "interference",
+    "warmup": true
+  },
+  "backend_receipts": [
+    {
+      "event": "receive",
+      "t": 4505.909961092,
+      "uid": 0,
+      "input_sha256": "76856c5a0925e8c8f2792a0be277e322d7dc72b5172972eb7f0de9022ef84b18",
+      "input_tokens": 47,
+      "max_tokens": 8
+    },
+    {
+      "event": "receive",
+      "t": 4505.990576661,
+      "uid": 1,
+      "input_sha256": "e867fdcbca675d66f5b217c47bb373974f8c14193417236a44d5afa5ceae311c",
+      "input_tokens": 12,
+      "max_tokens": 9
+    }
+  ],
+  "backend_tokens": [
+    {
+      "event": "token",
+      "t": 4506.083866867,
+      "uid": 0,
+      "token": 13,
+      "finished": false
+    },
+    {
+      "event": "token",
+      "t": 4506.102029787,
+      "uid": 1,
+      "token": 11,
+      "finished": false
+    },
+    {
+      "event": "token",
+      "t": 4506.10636294,
+      "uid": 0,
+      "token": 15,
+      "finished": false
+    },
+    {
+      "event": "token",
+      "t": 4506.106373566,
+      "uid": 1,
+      "token": 714,
+      "finished": false
+    },
+    {
+      "event": "token",
+      "t": 4506.114995983,
+      "uid": 0,
+      "token": 13,
+      "finished": false
+    },
+    {
+      "event": "token",
+      "t": 4506.115015058,
+      "uid": 1,
+      "token": 358,
+      "finished": false
+    },
+    {
+      "event": "token",
+      "t": 4506.122085334,
+      "uid": 0,
+      "token": 15,
+      "finished": false
+    },
+    {
+      "event": "token",
+      "t": 4506.122101865,
+      "uid": 1,
+      "token": 1513,
+      "finished": false
+    },
+    {
+      "event": "token",
+      "t": 4506.130430979,
+      "uid": 0,
+      "token": 13,
+      "finished": false
+    },
+    {
+      "event": "token",
+      "t": 4506.130453655,
+      "uid": 1,
+      "token": 944,
+      "finished": false
+    },
+    {
+      "event": "token",
+      "t": 4506.13813777,
+      "uid": 0,
+      "token": 15,
+      "finished": false
+    },
+    {
+      "event": "token",
+      "t": 4506.138152409,
+      "uid": 1,
+      "token": 1414,
+      "finished": false
+    },
+    {
+      "event": "token",
+      "t": 4506.153935328,
+      "uid": 0,
+      "token": 13,
+      "finished": true
+    },
+    {
+      "event": "token",
+      "t": 4506.153954486,
+      "uid": 1,
+      "token": 1246,
+      "finished": false
+    },
+    {
+      "event": "token",
+      "t": 4506.156362296,
+      "uid": 0,
+      "token": 15,
+      "finished": true
+    },
+    {
+      "event": "token",
+      "t": 4506.156370994,
+      "uid": 1,
+      "token": 311,
+      "finished": true
+    },
+    {
+      "event": "token",
+      "t": 4506.164781056,
+      "uid": 1,
+      "token": 633,
+      "finished": true
+    }
+  ]
+}

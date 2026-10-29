@@ -1,0 +1,636 @@
+{
+  "purpose": "Only correctness/instrumentation smoke; no performance gains inferred",
+  "experiments": [
+    {
+      "kind": "smoke_correctness",
+      "mode": "profile",
+      "plan_sha256": "348163ef9ef8031008452c08be7c3ad985114d83148661932d32b2e16abbd4cb",
+      "server": {
+        "context": 128,
+        "slots": 3,
+        "pages": 768,
+        "budget": 7,
+        "graph": 4,
+        "overlap": false,
+        "cache": "radix"
+      },
+      "trials": [
+        {
+          "policy": "baseline",
+          "status": "COMPLETE",
+          "audit_errors": [],
+          "performance_comparison_eligible": false,
+          "command": [
+            "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/bin/python",
+            "-u",
+            "/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/benchmark/c7/server.py",
+            "--model",
+            "/home/wty238388/ai-infra/models/Qwen3-0.6B",
+            "--dtype",
+            "bfloat16",
+            "--attention-backend",
+            "fi",
+            "--page-size",
+            "1",
+            "--tp-size",
+            "1",
+            "--host",
+            "127.0.0.1",
+            "--port",
+            "45093",
+            "--max-running-requests",
+            "3",
+            "--max-seq-len-override",
+            "128",
+            "--num-pages",
+            "768",
+            "--max-extend-length",
+            "7",
+            "--graph",
+            "4",
+            "--cache-type",
+            "radix"
+          ],
+          "code_sha256": "1215e3e6303f562dc459e44e9977e2f1f35d0cb0dd2780fad83e822d4f880251",
+          "actual_server": {
+            "mode": "profile",
+            "model": "/home/wty238388/ai-infra/models/Qwen3-0.6B",
+            "dtype": "torch.bfloat16",
+            "tp": 1,
+            "page_size": 1,
+            "attention_backend": "fi",
+            "context": 128,
+            "slots": 3,
+            "pages": 768,
+            "budget": 7,
+            "cache": "radix",
+            "mixed": false,
+            "graph_sizes": [
+              1,
+              2,
+              4
+            ],
+            "gpu": "NVIDIA GeForce RTX 3060 Laptop GPU",
+            "sm": [
+              8,
+              6
+            ],
+            "total_vram_bytes": 6441926656,
+            "cuda": "12.8",
+            "versions": {
+              "torch": "2.9.1",
+              "flashinfer-python": "0.6.16.post3",
+              "transformers": "4.57.3",
+              "triton": "3.5.1",
+              "sgl-kernel": "0.3.21"
+            },
+            "environment": {
+              "PYTHONPATH": "/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/python",
+              "MINISGL_DISABLE_OVERLAP_SCHEDULING": "1"
+            }
+          },
+          "requests": [
+            {
+              "id": "r0000",
+              "server_uid": 3,
+              "expected": 9,
+              "received": 9,
+              "done": 1,
+              "finish": 1,
+              "roles": 1,
+              "error": null
+            },
+            {
+              "id": "r0001",
+              "server_uid": 2,
+              "expected": 10,
+              "received": 10,
+              "done": 1,
+              "finish": 1,
+              "roles": 1,
+              "error": null
+            },
+            {
+              "id": "r0002",
+              "server_uid": 4,
+              "expected": 9,
+              "received": 9,
+              "done": 1,
+              "finish": 1,
+              "roles": 1,
+              "error": null
+            },
+            {
+              "id": "r0003",
+              "server_uid": 5,
+              "expected": 10,
+              "received": 10,
+              "done": 1,
+              "finish": 1,
+              "roles": 1,
+              "error": null
+            },
+            {
+              "id": "r0004",
+              "server_uid": 6,
+              "expected": 12,
+              "received": 12,
+              "done": 1,
+              "finish": 1,
+              "roles": 1,
+              "error": null
+            },
+            {
+              "id": "r0005",
+              "server_uid": 7,
+              "expected": 8,
+              "received": 8,
+              "done": 1,
+              "finish": 1,
+              "roles": 1,
+              "error": null
+            }
+          ],
+          "instrumentation": {
+            "measured_uid_coverage": 6,
+            "forward_count": 31,
+            "phase_counts": {
+              "prefill": 12,
+              "decode": 19
+            },
+            "graph_count": 19,
+            "eager_count": 12,
+            "extra_finished": 0,
+            "mixed_graph_violations": 0,
+            "cuda_timed_forwards": 31,
+            "mixed_cuda_samples": null
+          },
+          "gpu_telemetry_samples": 8
+        },
+        {
+          "policy": "mixed",
+          "status": "COMPLETE",
+          "audit_errors": [],
+          "performance_comparison_eligible": false,
+          "command": [
+            "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/bin/python",
+            "-u",
+            "/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/benchmark/c7/server.py",
+            "--model",
+            "/home/wty238388/ai-infra/models/Qwen3-0.6B",
+            "--dtype",
+            "bfloat16",
+            "--attention-backend",
+            "fi",
+            "--page-size",
+            "1",
+            "--tp-size",
+            "1",
+            "--host",
+            "127.0.0.1",
+            "--port",
+            "46483",
+            "--max-running-requests",
+            "3",
+            "--max-seq-len-override",
+            "128",
+            "--num-pages",
+            "768",
+            "--max-extend-length",
+            "7",
+            "--graph",
+            "4",
+            "--cache-type",
+            "radix",
+            "--enable-mixed-batching"
+          ],
+          "code_sha256": "1215e3e6303f562dc459e44e9977e2f1f35d0cb0dd2780fad83e822d4f880251",
+          "actual_server": {
+            "mode": "profile",
+            "model": "/home/wty238388/ai-infra/models/Qwen3-0.6B",
+            "dtype": "torch.bfloat16",
+            "tp": 1,
+            "page_size": 1,
+            "attention_backend": "fi",
+            "context": 128,
+            "slots": 3,
+            "pages": 768,
+            "budget": 7,
+            "cache": "radix",
+            "mixed": true,
+            "graph_sizes": [
+              1,
+              2,
+              4
+            ],
+            "gpu": "NVIDIA GeForce RTX 3060 Laptop GPU",
+            "sm": [
+              8,
+              6
+            ],
+            "total_vram_bytes": 6441926656,
+            "cuda": "12.8",
+            "versions": {
+              "torch": "2.9.1",
+              "flashinfer-python": "0.6.16.post3",
+              "transformers": "4.57.3",
+              "triton": "3.5.1",
+              "sgl-kernel": "0.3.21"
+            },
+            "environment": {
+              "PYTHONPATH": "/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/python",
+              "MINISGL_DISABLE_OVERLAP_SCHEDULING": "1"
+            }
+          },
+          "requests": [
+            {
+              "id": "r0000",
+              "server_uid": 4,
+              "expected": 9,
+              "received": 9,
+              "done": 1,
+              "finish": 1,
+              "roles": 1,
+              "error": null
+            },
+            {
+              "id": "r0001",
+              "server_uid": 3,
+              "expected": 10,
+              "received": 10,
+              "done": 1,
+              "finish": 1,
+              "roles": 1,
+              "error": null
+            },
+            {
+              "id": "r0002",
+              "server_uid": 2,
+              "expected": 9,
+              "received": 9,
+              "done": 1,
+              "finish": 1,
+              "roles": 1,
+              "error": null
+            },
+            {
+              "id": "r0003",
+              "server_uid": 5,
+              "expected": 10,
+              "received": 10,
+              "done": 1,
+              "finish": 1,
+              "roles": 1,
+              "error": null
+            },
+            {
+              "id": "r0004",
+              "server_uid": 6,
+              "expected": 12,
+              "received": 12,
+              "done": 1,
+              "finish": 1,
+              "roles": 1,
+              "error": null
+            },
+            {
+              "id": "r0005",
+              "server_uid": 7,
+              "expected": 8,
+              "received": 8,
+              "done": 1,
+              "finish": 1,
+              "roles": 1,
+              "error": null
+            }
+          ],
+          "instrumentation": {
+            "measured_uid_coverage": 6,
+            "forward_count": 28,
+            "phase_counts": {
+              "prefill": 5,
+              "mixed": 8,
+              "decode": 15
+            },
+            "graph_count": 15,
+            "eager_count": 13,
+            "extra_finished": 0,
+            "mixed_graph_violations": 0,
+            "cuda_timed_forwards": 28,
+            "mixed_cuda_samples": 8
+          },
+          "gpu_telemetry_samples": 8
+        }
+      ],
+      "paired_comparisons": [
+        {
+          "scenario": "interference",
+          "repeat": 0,
+          "withheld_reason": "smoke, instrumented, failed, or client-limited trial; inspect raw metrics",
+          "cohort_output_ratio_mixed_over_baseline": null,
+          "goodput_delta_req_s": null
+        }
+      ]
+    },
+    {
+      "kind": "smoke_correctness",
+      "mode": "primary",
+      "plan_sha256": "348163ef9ef8031008452c08be7c3ad985114d83148661932d32b2e16abbd4cb",
+      "server": {
+        "context": 128,
+        "slots": 3,
+        "pages": 768,
+        "budget": 7,
+        "graph": 4,
+        "overlap": false,
+        "cache": "radix"
+      },
+      "trials": [
+        {
+          "policy": "baseline",
+          "status": "COMPLETE",
+          "audit_errors": [],
+          "performance_comparison_eligible": false,
+          "command": [
+            "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/bin/python",
+            "-u",
+            "/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/benchmark/c7/server.py",
+            "--model",
+            "/home/wty238388/ai-infra/models/Qwen3-0.6B",
+            "--dtype",
+            "bfloat16",
+            "--attention-backend",
+            "fi",
+            "--page-size",
+            "1",
+            "--tp-size",
+            "1",
+            "--host",
+            "127.0.0.1",
+            "--port",
+            "48249",
+            "--max-running-requests",
+            "3",
+            "--max-seq-len-override",
+            "128",
+            "--num-pages",
+            "768",
+            "--max-extend-length",
+            "7",
+            "--graph",
+            "4",
+            "--cache-type",
+            "radix"
+          ],
+          "code_sha256": "1215e3e6303f562dc459e44e9977e2f1f35d0cb0dd2780fad83e822d4f880251",
+          "actual_server": {
+            "mode": "primary",
+            "model": "/home/wty238388/ai-infra/models/Qwen3-0.6B",
+            "dtype": "torch.bfloat16",
+            "tp": 1,
+            "page_size": 1,
+            "attention_backend": "fi",
+            "context": 128,
+            "slots": 3,
+            "pages": 768,
+            "budget": 7,
+            "cache": "radix",
+            "mixed": false,
+            "graph_sizes": [
+              1,
+              2,
+              4
+            ],
+            "gpu": "NVIDIA GeForce RTX 3060 Laptop GPU",
+            "sm": [
+              8,
+              6
+            ],
+            "total_vram_bytes": 6441926656,
+            "cuda": "12.8",
+            "versions": {
+              "torch": "2.9.1",
+              "flashinfer-python": "0.6.16.post3",
+              "transformers": "4.57.3",
+              "triton": "3.5.1",
+              "sgl-kernel": "0.3.21"
+            },
+            "environment": {
+              "PYTHONPATH": "/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/python",
+              "MINISGL_DISABLE_OVERLAP_SCHEDULING": "1"
+            }
+          },
+          "requests": [
+            {
+              "id": "r0000",
+              "server_uid": 4,
+              "expected": 9,
+              "received": 9,
+              "done": 1,
+              "finish": 1,
+              "roles": 1,
+              "error": null
+            },
+            {
+              "id": "r0001",
+              "server_uid": 3,
+              "expected": 10,
+              "received": 10,
+              "done": 1,
+              "finish": 1,
+              "roles": 1,
+              "error": null
+            },
+            {
+              "id": "r0002",
+              "server_uid": 2,
+              "expected": 9,
+              "received": 9,
+              "done": 1,
+              "finish": 1,
+              "roles": 1,
+              "error": null
+            },
+            {
+              "id": "r0003",
+              "server_uid": 5,
+              "expected": 10,
+              "received": 10,
+              "done": 1,
+              "finish": 1,
+              "roles": 1,
+              "error": null
+            },
+            {
+              "id": "r0004",
+              "server_uid": 6,
+              "expected": 12,
+              "received": 12,
+              "done": 1,
+              "finish": 1,
+              "roles": 1,
+              "error": null
+            },
+            {
+              "id": "r0005",
+              "server_uid": 7,
+              "expected": 8,
+              "received": 8,
+              "done": 1,
+              "finish": 1,
+              "roles": 1,
+              "error": null
+            }
+          ]
+        },
+        {
+          "policy": "mixed",
+          "status": "COMPLETE",
+          "audit_errors": [],
+          "performance_comparison_eligible": false,
+          "command": [
+            "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/bin/python",
+            "-u",
+            "/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/benchmark/c7/server.py",
+            "--model",
+            "/home/wty238388/ai-infra/models/Qwen3-0.6B",
+            "--dtype",
+            "bfloat16",
+            "--attention-backend",
+            "fi",
+            "--page-size",
+            "1",
+            "--tp-size",
+            "1",
+            "--host",
+            "127.0.0.1",
+            "--port",
+            "44757",
+            "--max-running-requests",
+            "3",
+            "--max-seq-len-override",
+            "128",
+            "--num-pages",
+            "768",
+            "--max-extend-length",
+            "7",
+            "--graph",
+            "4",
+            "--cache-type",
+            "radix",
+            "--enable-mixed-batching"
+          ],
+          "code_sha256": "1215e3e6303f562dc459e44e9977e2f1f35d0cb0dd2780fad83e822d4f880251",
+          "actual_server": {
+            "mode": "primary",
+            "model": "/home/wty238388/ai-infra/models/Qwen3-0.6B",
+            "dtype": "torch.bfloat16",
+            "tp": 1,
+            "page_size": 1,
+            "attention_backend": "fi",
+            "context": 128,
+            "slots": 3,
+            "pages": 768,
+            "budget": 7,
+            "cache": "radix",
+            "mixed": true,
+            "graph_sizes": [
+              1,
+              2,
+              4
+            ],
+            "gpu": "NVIDIA GeForce RTX 3060 Laptop GPU",
+            "sm": [
+              8,
+              6
+            ],
+            "total_vram_bytes": 6441926656,
+            "cuda": "12.8",
+            "versions": {
+              "torch": "2.9.1",
+              "flashinfer-python": "0.6.16.post3",
+              "transformers": "4.57.3",
+              "triton": "3.5.1",
+              "sgl-kernel": "0.3.21"
+            },
+            "environment": {
+              "PYTHONPATH": "/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/python",
+              "MINISGL_DISABLE_OVERLAP_SCHEDULING": "1"
+            }
+          },
+          "requests": [
+            {
+              "id": "r0000",
+              "server_uid": 3,
+              "expected": 9,
+              "received": 9,
+              "done": 1,
+              "finish": 1,
+              "roles": 1,
+              "error": null
+            },
+            {
+              "id": "r0001",
+              "server_uid": 4,
+              "expected": 10,
+              "received": 10,
+              "done": 1,
+              "finish": 1,
+              "roles": 1,
+              "error": null
+            },
+            {
+              "id": "r0002",
+              "server_uid": 2,
+              "expected": 9,
+              "received": 9,
+              "done": 1,
+              "finish": 1,
+              "roles": 1,
+              "error": null
+            },
+            {
+              "id": "r0003",
+              "server_uid": 5,
+              "expected": 10,
+              "received": 10,
+              "done": 1,
+              "finish": 1,
+              "roles": 1,
+              "error": null
+            },
+            {
+              "id": "r0004",
+              "server_uid": 6,
+              "expected": 12,
+              "received": 12,
+              "done": 1,
+              "finish": 1,
+              "roles": 1,
+              "error": null
+            },
+            {
+              "id": "r0005",
+              "server_uid": 7,
+              "expected": 8,
+              "received": 8,
+              "done": 1,
+              "finish": 1,
+              "roles": 1,
+              "error": null
+            }
+          ]
+        }
+      ],
+      "paired_comparisons": [
+        {
+          "scenario": "interference",
+          "repeat": 0,
+          "withheld_reason": "smoke, instrumented, failed, or client-limited trial; inspect raw metrics",
+          "cohort_output_ratio_mixed_over_baseline": null,
+          "goodput_delta_req_s": null
+        }
+      ]
+    }
+  ]
+}

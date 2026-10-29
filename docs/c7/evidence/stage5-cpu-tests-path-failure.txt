@@ -1,0 +1,1687 @@
+..................................F..F.....F...............FFF.........F [ 69%]
+...............................                                          [100%]
+=================================== FAILURES ===================================
+________ test_overlap_termination_uses_snapshot_and_sends_finished_once ________
+
+scheduler = <minisgl.scheduler.scheduler.Scheduler object at 0x71e0ebab9e20>
+
+    def test_overlap_termination_uses_snapshot_and_sends_finished_once(scheduler):
+        batch = prefill(scheduler, output_len=2)
+        first = submit(scheduler, batch, [40])
+        req = batch.reqs[0]
+        second = submit(scheduler, decode_batch(req), [41])
+        assert not req.can_decode
+        scheduler._process_last_data(first)
+        assert [msg.finished for msg in scheduler.replies] == [False]
+        assert req.cache_handle.cached_len == batch.layout.kv_lens[0] == 3
+        assert req.cached_len == 4  # speculative Decode KV must remain private
+>       scheduler._process_last_data(second)
+
+tests/core/test_mixed_lifecycle.py:228:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+python/minisgl/scheduler/scheduler.py:149: in _process_last_data
+    self._process_mixed_result(last_data)
+python/minisgl/scheduler/scheduler.py:243: in _process_mixed_result
+    self._retire_mixed_req(state)
+python/minisgl/scheduler/scheduler.py:216: in _retire_mixed_req
+    self._cache_mixed_req(req, finished=True)
+python/minisgl/scheduler/scheduler.py:199: in _cache_mixed_req
+    self.cache_manager.cache_req(cached_req, finished=finished)
+python/minisgl/scheduler/cache.py:70: in cache_req
+    cached_len, new_handle = self.prefix_cache.insert_prefix(insert_ids, page_indices)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kvcache/radix_cache.py:139: in insert_prefix
+    node, prefix_len = self._tree_walk(input_ids)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kvcache/radix_cache.py:218: in _tree_walk
+    match_len = node.get_match_len(input_ids[prefix_len:])
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kvcache/radix_cache.py:67: in get_match_len
+    return fast_compare_key(self._key, input_ids)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kernel/radix.py:20: in fast_compare_key
+    return _load_radix_module().fast_compare_key(x, y)
+           ^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kernel/radix.py:15: in _load_radix_module
+    return load_aot("radix", cpp_files=["radix.cpp"])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kernel/utils.py:75: in load_aot
+    return load(
+../mini-sglang/.venv/lib/python3.12/site-packages/tvm_ffi/cpp/extension.py:1505: in load
+    build(
+../mini-sglang/.venv/lib/python3.12/site-packages/tvm_ffi/cpp/extension.py:1351: in build
+    return _build_impl(
+../mini-sglang/.venv/lib/python3.12/site-packages/tvm_ffi/cpp/extension.py:780: in _build_impl
+    build_ninja(str(build_dir))
+../mini-sglang/.venv/lib/python3.12/site-packages/tvm_ffi/cpp/extension.py:637: in build_ninja
+    status = subprocess.run(check=False, args=command, cwd=build_dir, capture_output=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.local/share/uv/python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/subprocess.py:548: in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.local/share/uv/python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/subprocess.py:1026: in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <Popen: returncode: 255 args: ['ninja', '-v']>, args = ['ninja', '-v']
+executable = b'ninja', preexec_fn = None, close_fds = True, pass_fds = ()
+cwd = '/home/wty238388/.cache/tvm-ffi/minisgl__radix_c7cf4230e797d147'
+env = None, startupinfo = None, creationflags = 0, shell = False, p2cread = -1
+p2cwrite = -1, c2pread = 12, c2pwrite = 13, errread = 14, errwrite = 15
+restore_signals = True, gid = None, gids = None, uid = None, umask = -1
+start_new_session = False, process_group = -1
+
+    def _execute_child(self, args, executable, preexec_fn, close_fds,
+                       pass_fds, cwd, env,
+                       startupinfo, creationflags, shell,
+                       p2cread, p2cwrite,
+                       c2pread, c2pwrite,
+                       errread, errwrite,
+                       restore_signals,
+                       gid, gids, uid, umask,
+                       start_new_session, process_group):
+        """Execute program (POSIX version)"""
+
+        if isinstance(args, (str, bytes)):
+            args = [args]
+        elif isinstance(args, os.PathLike):
+            if shell:
+                raise TypeError('path-like args is not allowed when '
+                                'shell is true')
+            args = [args]
+        else:
+            args = list(args)
+
+        if shell:
+            # On Android the default shell is at '/system/bin/sh'.
+            unix_shell = ('/system/bin/sh' if
+                      hasattr(sys, 'getandroidapilevel') else '/bin/sh')
+            args = [unix_shell, "-c"] + args
+            if executable:
+                args[0] = executable
+
+        if executable is None:
+            executable = args[0]
+
+        sys.audit("subprocess.Popen", executable, args, cwd, env)
+
+        if (_USE_POSIX_SPAWN
+                and os.path.dirname(executable)
+                and preexec_fn is None
+                and not close_fds
+                and not pass_fds
+                and cwd is None
+                and (p2cread == -1 or p2cread > 2)
+                and (c2pwrite == -1 or c2pwrite > 2)
+                and (errwrite == -1 or errwrite > 2)
+                and not start_new_session
+                and process_group == -1
+                and gid is None
+                and gids is None
+                and uid is None
+                and umask < 0):
+            self._posix_spawn(args, executable, env, restore_signals,
+                              p2cread, p2cwrite,
+                              c2pread, c2pwrite,
+                              errread, errwrite)
+            return
+
+        orig_executable = executable
+
+        # For transferring possible exec failure from child to parent.
+        # Data format: "exception name:hex errno:description"
+        # Pickle is not used; it is complex and involves memory allocation.
+        errpipe_read, errpipe_write = os.pipe()
+        # errpipe_write must not be in the standard io 0, 1, or 2 fd range.
+        low_fds_to_close = []
+        while errpipe_write < 3:
+            low_fds_to_close.append(errpipe_write)
+            errpipe_write = os.dup(errpipe_write)
+        for low_fd in low_fds_to_close:
+            os.close(low_fd)
+        try:
+            try:
+                # We must avoid complex work that could involve
+                # malloc or free in the child process to avoid
+                # potential deadlocks, thus we do all this here.
+                # and pass it to fork_exec()
+
+                if env is not None:
+                    env_list = []
+                    for k, v in env.items():
+                        k = os.fsencode(k)
+                        if b'=' in k:
+                            raise ValueError("illegal environment variable name")
+                        env_list.append(k + b'=' + os.fsencode(v))
+                else:
+                    env_list = None  # Use execv instead of execve.
+                executable = os.fsencode(executable)
+                if os.path.dirname(executable):
+                    executable_list = (executable,)
+                else:
+                    # This matches the behavior of os._execvpe().
+                    executable_list = tuple(
+                        os.path.join(os.fsencode(dir), executable)
+                        for dir in os.get_exec_path(env))
+                fds_to_keep = set(pass_fds)
+                fds_to_keep.add(errpipe_write)
+                self.pid = _fork_exec(
+                        args, executable_list,
+                        close_fds, tuple(sorted(map(int, fds_to_keep))),
+                        cwd, env_list,
+                        p2cread, p2cwrite, c2pread, c2pwrite,
+                        errread, errwrite,
+                        errpipe_read, errpipe_write,
+                        restore_signals, start_new_session,
+                        process_group, gid, gids, uid, umask,
+                        preexec_fn, _USE_VFORK)
+                self._child_created = True
+            finally:
+                # be sure the FD is closed no matter what
+                os.close(errpipe_write)
+
+            self._close_pipe_fds(p2cread, p2cwrite,
+                                 c2pread, c2pwrite,
+                                 errread, errwrite)
+
+            # Wait for exec to fail or succeed; possibly raising an
+            # exception (limited in size)
+            errpipe_data = bytearray()
+            while True:
+                part = os.read(errpipe_read, 50000)
+                errpipe_data += part
+                if not part or len(errpipe_data) > 50000:
+                    break
+        finally:
+            # be sure the FD is closed no matter what
+            os.close(errpipe_read)
+
+        if errpipe_data:
+            try:
+                pid, sts = os.waitpid(self.pid, 0)
+                if pid == self.pid:
+                    self._handle_exitstatus(sts)
+                else:
+                    self.returncode = sys.maxsize
+            except ChildProcessError:
+                pass
+
+            try:
+                exception_name, hex_errno, err_msg = (
+                        errpipe_data.split(b':', 2))
+                # The encoding here should match the encoding
+                # written in by the subprocess implementations
+                # like _posixsubprocess
+                err_msg = err_msg.decode()
+            except ValueError:
+                exception_name = b'SubprocessError'
+                hex_errno = b'0'
+                err_msg = 'Bad exception data from child: {!r}'.format(
+                              bytes(errpipe_data))
+            child_exception_type = getattr(
+                    builtins, exception_name.decode('ascii'),
+                    SubprocessError)
+            if issubclass(child_exception_type, OSError) and hex_errno:
+                errno_num = int(hex_errno, 16)
+                if err_msg == "noexec:chdir":
+                    err_msg = ""
+                    # The error must be from chdir(cwd).
+                    err_filename = cwd
+                elif err_msg == "noexec":
+                    err_msg = ""
+                    err_filename = None
+                else:
+                    err_filename = orig_executable
+                if errno_num != 0:
+                    err_msg = os.strerror(errno_num)
+                if err_filename is not None:
+>                   raise child_exception_type(errno_num, err_msg, err_filename)
+E                   FileNotFoundError: [Errno 2] No such file or directory: 'ninja'
+
+../../../.local/share/uv/python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/subprocess.py:1955: FileNotFoundError
+_________________ test_ignore_eos_keeps_original_meaning[True] _________________
+
+scheduler = <minisgl.scheduler.scheduler.Scheduler object at 0x71e0e8f35310>
+ignore_eos = True
+
+    @pytest.mark.parametrize("ignore_eos", [False, True])
+    def test_ignore_eos_keeps_original_meaning(scheduler, ignore_eos):
+        batch = prefill(scheduler, output_len=2, ignore_eos=ignore_eos)
+        first = submit(scheduler, batch, [99])
+        scheduler._process_last_data(first)
+        assert scheduler.replies[0].finished == (not ignore_eos)
+        if ignore_eos:
+            second = submit(scheduler, decode_batch(batch.reqs[0]), [1])
+>           scheduler._process_last_data(second)
+
+tests/core/test_mixed_lifecycle.py:264:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+python/minisgl/scheduler/scheduler.py:149: in _process_last_data
+    self._process_mixed_result(last_data)
+python/minisgl/scheduler/scheduler.py:243: in _process_mixed_result
+    self._retire_mixed_req(state)
+python/minisgl/scheduler/scheduler.py:216: in _retire_mixed_req
+    self._cache_mixed_req(req, finished=True)
+python/minisgl/scheduler/scheduler.py:199: in _cache_mixed_req
+    self.cache_manager.cache_req(cached_req, finished=finished)
+python/minisgl/scheduler/cache.py:70: in cache_req
+    cached_len, new_handle = self.prefix_cache.insert_prefix(insert_ids, page_indices)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kvcache/radix_cache.py:139: in insert_prefix
+    node, prefix_len = self._tree_walk(input_ids)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kvcache/radix_cache.py:218: in _tree_walk
+    match_len = node.get_match_len(input_ids[prefix_len:])
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kvcache/radix_cache.py:67: in get_match_len
+    return fast_compare_key(self._key, input_ids)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kernel/radix.py:20: in fast_compare_key
+    return _load_radix_module().fast_compare_key(x, y)
+           ^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kernel/radix.py:15: in _load_radix_module
+    return load_aot("radix", cpp_files=["radix.cpp"])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kernel/utils.py:75: in load_aot
+    return load(
+../mini-sglang/.venv/lib/python3.12/site-packages/tvm_ffi/cpp/extension.py:1505: in load
+    build(
+../mini-sglang/.venv/lib/python3.12/site-packages/tvm_ffi/cpp/extension.py:1351: in build
+    return _build_impl(
+../mini-sglang/.venv/lib/python3.12/site-packages/tvm_ffi/cpp/extension.py:780: in _build_impl
+    build_ninja(str(build_dir))
+../mini-sglang/.venv/lib/python3.12/site-packages/tvm_ffi/cpp/extension.py:637: in build_ninja
+    status = subprocess.run(check=False, args=command, cwd=build_dir, capture_output=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.local/share/uv/python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/subprocess.py:548: in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.local/share/uv/python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/subprocess.py:1026: in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <Popen: returncode: 255 args: ['ninja', '-v']>, args = ['ninja', '-v']
+executable = b'ninja', preexec_fn = None, close_fds = True, pass_fds = ()
+cwd = '/home/wty238388/.cache/tvm-ffi/minisgl__radix_c7cf4230e797d147'
+env = None, startupinfo = None, creationflags = 0, shell = False, p2cread = -1
+p2cwrite = -1, c2pread = 12, c2pwrite = 13, errread = 14, errwrite = 15
+restore_signals = True, gid = None, gids = None, uid = None, umask = -1
+start_new_session = False, process_group = -1
+
+    def _execute_child(self, args, executable, preexec_fn, close_fds,
+                       pass_fds, cwd, env,
+                       startupinfo, creationflags, shell,
+                       p2cread, p2cwrite,
+                       c2pread, c2pwrite,
+                       errread, errwrite,
+                       restore_signals,
+                       gid, gids, uid, umask,
+                       start_new_session, process_group):
+        """Execute program (POSIX version)"""
+
+        if isinstance(args, (str, bytes)):
+            args = [args]
+        elif isinstance(args, os.PathLike):
+            if shell:
+                raise TypeError('path-like args is not allowed when '
+                                'shell is true')
+            args = [args]
+        else:
+            args = list(args)
+
+        if shell:
+            # On Android the default shell is at '/system/bin/sh'.
+            unix_shell = ('/system/bin/sh' if
+                      hasattr(sys, 'getandroidapilevel') else '/bin/sh')
+            args = [unix_shell, "-c"] + args
+            if executable:
+                args[0] = executable
+
+        if executable is None:
+            executable = args[0]
+
+        sys.audit("subprocess.Popen", executable, args, cwd, env)
+
+        if (_USE_POSIX_SPAWN
+                and os.path.dirname(executable)
+                and preexec_fn is None
+                and not close_fds
+                and not pass_fds
+                and cwd is None
+                and (p2cread == -1 or p2cread > 2)
+                and (c2pwrite == -1 or c2pwrite > 2)
+                and (errwrite == -1 or errwrite > 2)
+                and not start_new_session
+                and process_group == -1
+                and gid is None
+                and gids is None
+                and uid is None
+                and umask < 0):
+            self._posix_spawn(args, executable, env, restore_signals,
+                              p2cread, p2cwrite,
+                              c2pread, c2pwrite,
+                              errread, errwrite)
+            return
+
+        orig_executable = executable
+
+        # For transferring possible exec failure from child to parent.
+        # Data format: "exception name:hex errno:description"
+        # Pickle is not used; it is complex and involves memory allocation.
+        errpipe_read, errpipe_write = os.pipe()
+        # errpipe_write must not be in the standard io 0, 1, or 2 fd range.
+        low_fds_to_close = []
+        while errpipe_write < 3:
+            low_fds_to_close.append(errpipe_write)
+            errpipe_write = os.dup(errpipe_write)
+        for low_fd in low_fds_to_close:
+            os.close(low_fd)
+        try:
+            try:
+                # We must avoid complex work that could involve
+                # malloc or free in the child process to avoid
+                # potential deadlocks, thus we do all this here.
+                # and pass it to fork_exec()
+
+                if env is not None:
+                    env_list = []
+                    for k, v in env.items():
+                        k = os.fsencode(k)
+                        if b'=' in k:
+                            raise ValueError("illegal environment variable name")
+                        env_list.append(k + b'=' + os.fsencode(v))
+                else:
+                    env_list = None  # Use execv instead of execve.
+                executable = os.fsencode(executable)
+                if os.path.dirname(executable):
+                    executable_list = (executable,)
+                else:
+                    # This matches the behavior of os._execvpe().
+                    executable_list = tuple(
+                        os.path.join(os.fsencode(dir), executable)
+                        for dir in os.get_exec_path(env))
+                fds_to_keep = set(pass_fds)
+                fds_to_keep.add(errpipe_write)
+                self.pid = _fork_exec(
+                        args, executable_list,
+                        close_fds, tuple(sorted(map(int, fds_to_keep))),
+                        cwd, env_list,
+                        p2cread, p2cwrite, c2pread, c2pwrite,
+                        errread, errwrite,
+                        errpipe_read, errpipe_write,
+                        restore_signals, start_new_session,
+                        process_group, gid, gids, uid, umask,
+                        preexec_fn, _USE_VFORK)
+                self._child_created = True
+            finally:
+                # be sure the FD is closed no matter what
+                os.close(errpipe_write)
+
+            self._close_pipe_fds(p2cread, p2cwrite,
+                                 c2pread, c2pwrite,
+                                 errread, errwrite)
+
+            # Wait for exec to fail or succeed; possibly raising an
+            # exception (limited in size)
+            errpipe_data = bytearray()
+            while True:
+                part = os.read(errpipe_read, 50000)
+                errpipe_data += part
+                if not part or len(errpipe_data) > 50000:
+                    break
+        finally:
+            # be sure the FD is closed no matter what
+            os.close(errpipe_read)
+
+        if errpipe_data:
+            try:
+                pid, sts = os.waitpid(self.pid, 0)
+                if pid == self.pid:
+                    self._handle_exitstatus(sts)
+                else:
+                    self.returncode = sys.maxsize
+            except ChildProcessError:
+                pass
+
+            try:
+                exception_name, hex_errno, err_msg = (
+                        errpipe_data.split(b':', 2))
+                # The encoding here should match the encoding
+                # written in by the subprocess implementations
+                # like _posixsubprocess
+                err_msg = err_msg.decode()
+            except ValueError:
+                exception_name = b'SubprocessError'
+                hex_errno = b'0'
+                err_msg = 'Bad exception data from child: {!r}'.format(
+                              bytes(errpipe_data))
+            child_exception_type = getattr(
+                    builtins, exception_name.decode('ascii'),
+                    SubprocessError)
+            if issubclass(child_exception_type, OSError) and hex_errno:
+                errno_num = int(hex_errno, 16)
+                if err_msg == "noexec:chdir":
+                    err_msg = ""
+                    # The error must be from chdir(cwd).
+                    err_filename = cwd
+                elif err_msg == "noexec":
+                    err_msg = ""
+                    err_filename = None
+                else:
+                    err_filename = orig_executable
+                if errno_num != 0:
+                    err_msg = os.strerror(errno_num)
+                if err_filename is not None:
+>                   raise child_exception_type(errno_num, err_msg, err_filename)
+E                   FileNotFoundError: [Errno 2] No such file or directory: 'ninja'
+
+../../../.local/share/uv/python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/subprocess.py:1955: FileNotFoundError
+____ test_duplicate_prefix_remaps_live_page_table_before_freed_pages_reuse _____
+
+scheduler = <minisgl.scheduler.scheduler.Scheduler object at 0x71e0e8dec9b0>
+
+    def test_duplicate_prefix_remaps_live_page_table_before_freed_pages_reuse(scheduler):
+        first = prefill(scheduler, uid=1)
+        first_data = submit(scheduler, first, [40])
+        second = prefill(scheduler, uid=2)  # admitted before either prefix was inserted
+        second_data = submit(scheduler, second, [41])
+        old_second_pages = scheduler.engine.page_table[second.reqs[0].table_idx, :3].clone()
+        scheduler._process_last_data(first_data)
+>       scheduler._process_last_data(second_data)
+
+tests/core/test_mixed_lifecycle.py:314:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+python/minisgl/scheduler/scheduler.py:149: in _process_last_data
+    self._process_mixed_result(last_data)
+python/minisgl/scheduler/scheduler.py:245: in _process_mixed_result
+    canonical = self._cache_mixed_req(
+python/minisgl/scheduler/scheduler.py:199: in _cache_mixed_req
+    self.cache_manager.cache_req(cached_req, finished=finished)
+python/minisgl/scheduler/cache.py:70: in cache_req
+    cached_len, new_handle = self.prefix_cache.insert_prefix(insert_ids, page_indices)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kvcache/radix_cache.py:139: in insert_prefix
+    node, prefix_len = self._tree_walk(input_ids)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kvcache/radix_cache.py:218: in _tree_walk
+    match_len = node.get_match_len(input_ids[prefix_len:])
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kvcache/radix_cache.py:67: in get_match_len
+    return fast_compare_key(self._key, input_ids)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kernel/radix.py:20: in fast_compare_key
+    return _load_radix_module().fast_compare_key(x, y)
+           ^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kernel/radix.py:15: in _load_radix_module
+    return load_aot("radix", cpp_files=["radix.cpp"])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kernel/utils.py:75: in load_aot
+    return load(
+../mini-sglang/.venv/lib/python3.12/site-packages/tvm_ffi/cpp/extension.py:1505: in load
+    build(
+../mini-sglang/.venv/lib/python3.12/site-packages/tvm_ffi/cpp/extension.py:1351: in build
+    return _build_impl(
+../mini-sglang/.venv/lib/python3.12/site-packages/tvm_ffi/cpp/extension.py:780: in _build_impl
+    build_ninja(str(build_dir))
+../mini-sglang/.venv/lib/python3.12/site-packages/tvm_ffi/cpp/extension.py:637: in build_ninja
+    status = subprocess.run(check=False, args=command, cwd=build_dir, capture_output=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.local/share/uv/python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/subprocess.py:548: in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.local/share/uv/python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/subprocess.py:1026: in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <Popen: returncode: 255 args: ['ninja', '-v']>, args = ['ninja', '-v']
+executable = b'ninja', preexec_fn = None, close_fds = True, pass_fds = ()
+cwd = '/home/wty238388/.cache/tvm-ffi/minisgl__radix_c7cf4230e797d147'
+env = None, startupinfo = None, creationflags = 0, shell = False, p2cread = -1
+p2cwrite = -1, c2pread = 12, c2pwrite = 13, errread = 14, errwrite = 15
+restore_signals = True, gid = None, gids = None, uid = None, umask = -1
+start_new_session = False, process_group = -1
+
+    def _execute_child(self, args, executable, preexec_fn, close_fds,
+                       pass_fds, cwd, env,
+                       startupinfo, creationflags, shell,
+                       p2cread, p2cwrite,
+                       c2pread, c2pwrite,
+                       errread, errwrite,
+                       restore_signals,
+                       gid, gids, uid, umask,
+                       start_new_session, process_group):
+        """Execute program (POSIX version)"""
+
+        if isinstance(args, (str, bytes)):
+            args = [args]
+        elif isinstance(args, os.PathLike):
+            if shell:
+                raise TypeError('path-like args is not allowed when '
+                                'shell is true')
+            args = [args]
+        else:
+            args = list(args)
+
+        if shell:
+            # On Android the default shell is at '/system/bin/sh'.
+            unix_shell = ('/system/bin/sh' if
+                      hasattr(sys, 'getandroidapilevel') else '/bin/sh')
+            args = [unix_shell, "-c"] + args
+            if executable:
+                args[0] = executable
+
+        if executable is None:
+            executable = args[0]
+
+        sys.audit("subprocess.Popen", executable, args, cwd, env)
+
+        if (_USE_POSIX_SPAWN
+                and os.path.dirname(executable)
+                and preexec_fn is None
+                and not close_fds
+                and not pass_fds
+                and cwd is None
+                and (p2cread == -1 or p2cread > 2)
+                and (c2pwrite == -1 or c2pwrite > 2)
+                and (errwrite == -1 or errwrite > 2)
+                and not start_new_session
+                and process_group == -1
+                and gid is None
+                and gids is None
+                and uid is None
+                and umask < 0):
+            self._posix_spawn(args, executable, env, restore_signals,
+                              p2cread, p2cwrite,
+                              c2pread, c2pwrite,
+                              errread, errwrite)
+            return
+
+        orig_executable = executable
+
+        # For transferring possible exec failure from child to parent.
+        # Data format: "exception name:hex errno:description"
+        # Pickle is not used; it is complex and involves memory allocation.
+        errpipe_read, errpipe_write = os.pipe()
+        # errpipe_write must not be in the standard io 0, 1, or 2 fd range.
+        low_fds_to_close = []
+        while errpipe_write < 3:
+            low_fds_to_close.append(errpipe_write)
+            errpipe_write = os.dup(errpipe_write)
+        for low_fd in low_fds_to_close:
+            os.close(low_fd)
+        try:
+            try:
+                # We must avoid complex work that could involve
+                # malloc or free in the child process to avoid
+                # potential deadlocks, thus we do all this here.
+                # and pass it to fork_exec()
+
+                if env is not None:
+                    env_list = []
+                    for k, v in env.items():
+                        k = os.fsencode(k)
+                        if b'=' in k:
+                            raise ValueError("illegal environment variable name")
+                        env_list.append(k + b'=' + os.fsencode(v))
+                else:
+                    env_list = None  # Use execv instead of execve.
+                executable = os.fsencode(executable)
+                if os.path.dirname(executable):
+                    executable_list = (executable,)
+                else:
+                    # This matches the behavior of os._execvpe().
+                    executable_list = tuple(
+                        os.path.join(os.fsencode(dir), executable)
+                        for dir in os.get_exec_path(env))
+                fds_to_keep = set(pass_fds)
+                fds_to_keep.add(errpipe_write)
+                self.pid = _fork_exec(
+                        args, executable_list,
+                        close_fds, tuple(sorted(map(int, fds_to_keep))),
+                        cwd, env_list,
+                        p2cread, p2cwrite, c2pread, c2pwrite,
+                        errread, errwrite,
+                        errpipe_read, errpipe_write,
+                        restore_signals, start_new_session,
+                        process_group, gid, gids, uid, umask,
+                        preexec_fn, _USE_VFORK)
+                self._child_created = True
+            finally:
+                # be sure the FD is closed no matter what
+                os.close(errpipe_write)
+
+            self._close_pipe_fds(p2cread, p2cwrite,
+                                 c2pread, c2pwrite,
+                                 errread, errwrite)
+
+            # Wait for exec to fail or succeed; possibly raising an
+            # exception (limited in size)
+            errpipe_data = bytearray()
+            while True:
+                part = os.read(errpipe_read, 50000)
+                errpipe_data += part
+                if not part or len(errpipe_data) > 50000:
+                    break
+        finally:
+            # be sure the FD is closed no matter what
+            os.close(errpipe_read)
+
+        if errpipe_data:
+            try:
+                pid, sts = os.waitpid(self.pid, 0)
+                if pid == self.pid:
+                    self._handle_exitstatus(sts)
+                else:
+                    self.returncode = sys.maxsize
+            except ChildProcessError:
+                pass
+
+            try:
+                exception_name, hex_errno, err_msg = (
+                        errpipe_data.split(b':', 2))
+                # The encoding here should match the encoding
+                # written in by the subprocess implementations
+                # like _posixsubprocess
+                err_msg = err_msg.decode()
+            except ValueError:
+                exception_name = b'SubprocessError'
+                hex_errno = b'0'
+                err_msg = 'Bad exception data from child: {!r}'.format(
+                              bytes(errpipe_data))
+            child_exception_type = getattr(
+                    builtins, exception_name.decode('ascii'),
+                    SubprocessError)
+            if issubclass(child_exception_type, OSError) and hex_errno:
+                errno_num = int(hex_errno, 16)
+                if err_msg == "noexec:chdir":
+                    err_msg = ""
+                    # The error must be from chdir(cwd).
+                    err_filename = cwd
+                elif err_msg == "noexec":
+                    err_msg = ""
+                    err_filename = None
+                else:
+                    err_filename = orig_executable
+                if errno_num != 0:
+                    err_msg = os.strerror(errno_num)
+                if err_filename is not None:
+>                   raise child_exception_type(errno_num, err_msg, err_filename)
+E                   FileNotFoundError: [Errno 2] No such file or directory: 'ninja'
+
+../../../.local/share/uv/python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/subprocess.py:1955: FileNotFoundError
+________________ test_real_prefix_match_changes_query_length[7] ________________
+
+make_scheduler = <function make_scheduler.<locals>.make at 0x71e0e8d842c0>
+matched_len = 7
+
+    @pytest.mark.parametrize("matched_len", [0, 7, 9])
+    def test_real_prefix_match_changes_query_length(make_scheduler, matched_len):
+        scheduler = make_scheduler(16, cache_type="radix")
+        add_decode(scheduler, 1)
+        ids = torch.arange(100, 110, dtype=torch.int32)
+        indices = seed_prefix(scheduler, ids[:matched_len])
+        add_prefill(scheduler, 2, len(ids), ids=ids)
+>       batch = scheduler._select_next_batch()
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/core/test_mixed_scheduler.py:263:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+python/minisgl/scheduler/scheduler.py:328: in _select_next_batch
+    return schedule_mixed_batch(
+python/minisgl/scheduler/mixed.py:33: in schedule_mixed_batch
+    prefill = prefill_manager.schedule_next_batch(remaining_budget) if remaining_budget else None
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/scheduler/prefill.py:144: in schedule_next_batch
+    if req := adder.try_add_one(pending_req):
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/scheduler/prefill.py:108: in try_add_one
+    if resource := self._try_allocate_one(pending_req):
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/scheduler/prefill.py:48: in _try_allocate_one
+    handle = self.cache_manager.match_req(req).cuda_handle
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/scheduler/cache.py:30: in match_req
+    return self.prefix_cache.match_prefix(req.input_ids[: input_len - 1])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kvcache/radix_cache.py:133: in match_prefix
+    node, prefix_len = self._tree_walk(input_ids)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kvcache/radix_cache.py:218: in _tree_walk
+    match_len = node.get_match_len(input_ids[prefix_len:])
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kvcache/radix_cache.py:67: in get_match_len
+    return fast_compare_key(self._key, input_ids)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kernel/radix.py:20: in fast_compare_key
+    return _load_radix_module().fast_compare_key(x, y)
+           ^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kernel/radix.py:15: in _load_radix_module
+    return load_aot("radix", cpp_files=["radix.cpp"])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kernel/utils.py:75: in load_aot
+    return load(
+../mini-sglang/.venv/lib/python3.12/site-packages/tvm_ffi/cpp/extension.py:1505: in load
+    build(
+../mini-sglang/.venv/lib/python3.12/site-packages/tvm_ffi/cpp/extension.py:1351: in build
+    return _build_impl(
+../mini-sglang/.venv/lib/python3.12/site-packages/tvm_ffi/cpp/extension.py:780: in _build_impl
+    build_ninja(str(build_dir))
+../mini-sglang/.venv/lib/python3.12/site-packages/tvm_ffi/cpp/extension.py:637: in build_ninja
+    status = subprocess.run(check=False, args=command, cwd=build_dir, capture_output=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.local/share/uv/python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/subprocess.py:548: in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.local/share/uv/python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/subprocess.py:1026: in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <Popen: returncode: 255 args: ['ninja', '-v']>, args = ['ninja', '-v']
+executable = b'ninja', preexec_fn = None, close_fds = True, pass_fds = ()
+cwd = '/home/wty238388/.cache/tvm-ffi/minisgl__radix_c7cf4230e797d147'
+env = None, startupinfo = None, creationflags = 0, shell = False, p2cread = -1
+p2cwrite = -1, c2pread = 12, c2pwrite = 13, errread = 14, errwrite = 15
+restore_signals = True, gid = None, gids = None, uid = None, umask = -1
+start_new_session = False, process_group = -1
+
+    def _execute_child(self, args, executable, preexec_fn, close_fds,
+                       pass_fds, cwd, env,
+                       startupinfo, creationflags, shell,
+                       p2cread, p2cwrite,
+                       c2pread, c2pwrite,
+                       errread, errwrite,
+                       restore_signals,
+                       gid, gids, uid, umask,
+                       start_new_session, process_group):
+        """Execute program (POSIX version)"""
+
+        if isinstance(args, (str, bytes)):
+            args = [args]
+        elif isinstance(args, os.PathLike):
+            if shell:
+                raise TypeError('path-like args is not allowed when '
+                                'shell is true')
+            args = [args]
+        else:
+            args = list(args)
+
+        if shell:
+            # On Android the default shell is at '/system/bin/sh'.
+            unix_shell = ('/system/bin/sh' if
+                      hasattr(sys, 'getandroidapilevel') else '/bin/sh')
+            args = [unix_shell, "-c"] + args
+            if executable:
+                args[0] = executable
+
+        if executable is None:
+            executable = args[0]
+
+        sys.audit("subprocess.Popen", executable, args, cwd, env)
+
+        if (_USE_POSIX_SPAWN
+                and os.path.dirname(executable)
+                and preexec_fn is None
+                and not close_fds
+                and not pass_fds
+                and cwd is None
+                and (p2cread == -1 or p2cread > 2)
+                and (c2pwrite == -1 or c2pwrite > 2)
+                and (errwrite == -1 or errwrite > 2)
+                and not start_new_session
+                and process_group == -1
+                and gid is None
+                and gids is None
+                and uid is None
+                and umask < 0):
+            self._posix_spawn(args, executable, env, restore_signals,
+                              p2cread, p2cwrite,
+                              c2pread, c2pwrite,
+                              errread, errwrite)
+            return
+
+        orig_executable = executable
+
+        # For transferring possible exec failure from child to parent.
+        # Data format: "exception name:hex errno:description"
+        # Pickle is not used; it is complex and involves memory allocation.
+        errpipe_read, errpipe_write = os.pipe()
+        # errpipe_write must not be in the standard io 0, 1, or 2 fd range.
+        low_fds_to_close = []
+        while errpipe_write < 3:
+            low_fds_to_close.append(errpipe_write)
+            errpipe_write = os.dup(errpipe_write)
+        for low_fd in low_fds_to_close:
+            os.close(low_fd)
+        try:
+            try:
+                # We must avoid complex work that could involve
+                # malloc or free in the child process to avoid
+                # potential deadlocks, thus we do all this here.
+                # and pass it to fork_exec()
+
+                if env is not None:
+                    env_list = []
+                    for k, v in env.items():
+                        k = os.fsencode(k)
+                        if b'=' in k:
+                            raise ValueError("illegal environment variable name")
+                        env_list.append(k + b'=' + os.fsencode(v))
+                else:
+                    env_list = None  # Use execv instead of execve.
+                executable = os.fsencode(executable)
+                if os.path.dirname(executable):
+                    executable_list = (executable,)
+                else:
+                    # This matches the behavior of os._execvpe().
+                    executable_list = tuple(
+                        os.path.join(os.fsencode(dir), executable)
+                        for dir in os.get_exec_path(env))
+                fds_to_keep = set(pass_fds)
+                fds_to_keep.add(errpipe_write)
+                self.pid = _fork_exec(
+                        args, executable_list,
+                        close_fds, tuple(sorted(map(int, fds_to_keep))),
+                        cwd, env_list,
+                        p2cread, p2cwrite, c2pread, c2pwrite,
+                        errread, errwrite,
+                        errpipe_read, errpipe_write,
+                        restore_signals, start_new_session,
+                        process_group, gid, gids, uid, umask,
+                        preexec_fn, _USE_VFORK)
+                self._child_created = True
+            finally:
+                # be sure the FD is closed no matter what
+                os.close(errpipe_write)
+
+            self._close_pipe_fds(p2cread, p2cwrite,
+                                 c2pread, c2pwrite,
+                                 errread, errwrite)
+
+            # Wait for exec to fail or succeed; possibly raising an
+            # exception (limited in size)
+            errpipe_data = bytearray()
+            while True:
+                part = os.read(errpipe_read, 50000)
+                errpipe_data += part
+                if not part or len(errpipe_data) > 50000:
+                    break
+        finally:
+            # be sure the FD is closed no matter what
+            os.close(errpipe_read)
+
+        if errpipe_data:
+            try:
+                pid, sts = os.waitpid(self.pid, 0)
+                if pid == self.pid:
+                    self._handle_exitstatus(sts)
+                else:
+                    self.returncode = sys.maxsize
+            except ChildProcessError:
+                pass
+
+            try:
+                exception_name, hex_errno, err_msg = (
+                        errpipe_data.split(b':', 2))
+                # The encoding here should match the encoding
+                # written in by the subprocess implementations
+                # like _posixsubprocess
+                err_msg = err_msg.decode()
+            except ValueError:
+                exception_name = b'SubprocessError'
+                hex_errno = b'0'
+                err_msg = 'Bad exception data from child: {!r}'.format(
+                              bytes(errpipe_data))
+            child_exception_type = getattr(
+                    builtins, exception_name.decode('ascii'),
+                    SubprocessError)
+            if issubclass(child_exception_type, OSError) and hex_errno:
+                errno_num = int(hex_errno, 16)
+                if err_msg == "noexec:chdir":
+                    err_msg = ""
+                    # The error must be from chdir(cwd).
+                    err_filename = cwd
+                elif err_msg == "noexec":
+                    err_msg = ""
+                    err_filename = None
+                else:
+                    err_filename = orig_executable
+                if errno_num != 0:
+                    err_msg = os.strerror(errno_num)
+                if err_filename is not None:
+>                   raise child_exception_type(errno_num, err_msg, err_filename)
+E                   FileNotFoundError: [Errno 2] No such file or directory: 'ninja'
+
+../../../.local/share/uv/python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/subprocess.py:1955: FileNotFoundError
+________________ test_real_prefix_match_changes_query_length[9] ________________
+
+make_scheduler = <function make_scheduler.<locals>.make at 0x71e0e8dcade0>
+matched_len = 9
+
+    @pytest.mark.parametrize("matched_len", [0, 7, 9])
+    def test_real_prefix_match_changes_query_length(make_scheduler, matched_len):
+        scheduler = make_scheduler(16, cache_type="radix")
+        add_decode(scheduler, 1)
+        ids = torch.arange(100, 110, dtype=torch.int32)
+        indices = seed_prefix(scheduler, ids[:matched_len])
+        add_prefill(scheduler, 2, len(ids), ids=ids)
+>       batch = scheduler._select_next_batch()
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/core/test_mixed_scheduler.py:263:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+python/minisgl/scheduler/scheduler.py:328: in _select_next_batch
+    return schedule_mixed_batch(
+python/minisgl/scheduler/mixed.py:33: in schedule_mixed_batch
+    prefill = prefill_manager.schedule_next_batch(remaining_budget) if remaining_budget else None
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/scheduler/prefill.py:144: in schedule_next_batch
+    if req := adder.try_add_one(pending_req):
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/scheduler/prefill.py:108: in try_add_one
+    if resource := self._try_allocate_one(pending_req):
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/scheduler/prefill.py:48: in _try_allocate_one
+    handle = self.cache_manager.match_req(req).cuda_handle
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/scheduler/cache.py:30: in match_req
+    return self.prefix_cache.match_prefix(req.input_ids[: input_len - 1])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kvcache/radix_cache.py:133: in match_prefix
+    node, prefix_len = self._tree_walk(input_ids)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kvcache/radix_cache.py:218: in _tree_walk
+    match_len = node.get_match_len(input_ids[prefix_len:])
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kvcache/radix_cache.py:67: in get_match_len
+    return fast_compare_key(self._key, input_ids)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kernel/radix.py:20: in fast_compare_key
+    return _load_radix_module().fast_compare_key(x, y)
+           ^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kernel/radix.py:15: in _load_radix_module
+    return load_aot("radix", cpp_files=["radix.cpp"])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kernel/utils.py:75: in load_aot
+    return load(
+../mini-sglang/.venv/lib/python3.12/site-packages/tvm_ffi/cpp/extension.py:1505: in load
+    build(
+../mini-sglang/.venv/lib/python3.12/site-packages/tvm_ffi/cpp/extension.py:1351: in build
+    return _build_impl(
+../mini-sglang/.venv/lib/python3.12/site-packages/tvm_ffi/cpp/extension.py:780: in _build_impl
+    build_ninja(str(build_dir))
+../mini-sglang/.venv/lib/python3.12/site-packages/tvm_ffi/cpp/extension.py:637: in build_ninja
+    status = subprocess.run(check=False, args=command, cwd=build_dir, capture_output=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.local/share/uv/python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/subprocess.py:548: in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.local/share/uv/python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/subprocess.py:1026: in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <Popen: returncode: 255 args: ['ninja', '-v']>, args = ['ninja', '-v']
+executable = b'ninja', preexec_fn = None, close_fds = True, pass_fds = ()
+cwd = '/home/wty238388/.cache/tvm-ffi/minisgl__radix_c7cf4230e797d147'
+env = None, startupinfo = None, creationflags = 0, shell = False, p2cread = -1
+p2cwrite = -1, c2pread = 12, c2pwrite = 13, errread = 14, errwrite = 15
+restore_signals = True, gid = None, gids = None, uid = None, umask = -1
+start_new_session = False, process_group = -1
+
+    def _execute_child(self, args, executable, preexec_fn, close_fds,
+                       pass_fds, cwd, env,
+                       startupinfo, creationflags, shell,
+                       p2cread, p2cwrite,
+                       c2pread, c2pwrite,
+                       errread, errwrite,
+                       restore_signals,
+                       gid, gids, uid, umask,
+                       start_new_session, process_group):
+        """Execute program (POSIX version)"""
+
+        if isinstance(args, (str, bytes)):
+            args = [args]
+        elif isinstance(args, os.PathLike):
+            if shell:
+                raise TypeError('path-like args is not allowed when '
+                                'shell is true')
+            args = [args]
+        else:
+            args = list(args)
+
+        if shell:
+            # On Android the default shell is at '/system/bin/sh'.
+            unix_shell = ('/system/bin/sh' if
+                      hasattr(sys, 'getandroidapilevel') else '/bin/sh')
+            args = [unix_shell, "-c"] + args
+            if executable:
+                args[0] = executable
+
+        if executable is None:
+            executable = args[0]
+
+        sys.audit("subprocess.Popen", executable, args, cwd, env)
+
+        if (_USE_POSIX_SPAWN
+                and os.path.dirname(executable)
+                and preexec_fn is None
+                and not close_fds
+                and not pass_fds
+                and cwd is None
+                and (p2cread == -1 or p2cread > 2)
+                and (c2pwrite == -1 or c2pwrite > 2)
+                and (errwrite == -1 or errwrite > 2)
+                and not start_new_session
+                and process_group == -1
+                and gid is None
+                and gids is None
+                and uid is None
+                and umask < 0):
+            self._posix_spawn(args, executable, env, restore_signals,
+                              p2cread, p2cwrite,
+                              c2pread, c2pwrite,
+                              errread, errwrite)
+            return
+
+        orig_executable = executable
+
+        # For transferring possible exec failure from child to parent.
+        # Data format: "exception name:hex errno:description"
+        # Pickle is not used; it is complex and involves memory allocation.
+        errpipe_read, errpipe_write = os.pipe()
+        # errpipe_write must not be in the standard io 0, 1, or 2 fd range.
+        low_fds_to_close = []
+        while errpipe_write < 3:
+            low_fds_to_close.append(errpipe_write)
+            errpipe_write = os.dup(errpipe_write)
+        for low_fd in low_fds_to_close:
+            os.close(low_fd)
+        try:
+            try:
+                # We must avoid complex work that could involve
+                # malloc or free in the child process to avoid
+                # potential deadlocks, thus we do all this here.
+                # and pass it to fork_exec()
+
+                if env is not None:
+                    env_list = []
+                    for k, v in env.items():
+                        k = os.fsencode(k)
+                        if b'=' in k:
+                            raise ValueError("illegal environment variable name")
+                        env_list.append(k + b'=' + os.fsencode(v))
+                else:
+                    env_list = None  # Use execv instead of execve.
+                executable = os.fsencode(executable)
+                if os.path.dirname(executable):
+                    executable_list = (executable,)
+                else:
+                    # This matches the behavior of os._execvpe().
+                    executable_list = tuple(
+                        os.path.join(os.fsencode(dir), executable)
+                        for dir in os.get_exec_path(env))
+                fds_to_keep = set(pass_fds)
+                fds_to_keep.add(errpipe_write)
+                self.pid = _fork_exec(
+                        args, executable_list,
+                        close_fds, tuple(sorted(map(int, fds_to_keep))),
+                        cwd, env_list,
+                        p2cread, p2cwrite, c2pread, c2pwrite,
+                        errread, errwrite,
+                        errpipe_read, errpipe_write,
+                        restore_signals, start_new_session,
+                        process_group, gid, gids, uid, umask,
+                        preexec_fn, _USE_VFORK)
+                self._child_created = True
+            finally:
+                # be sure the FD is closed no matter what
+                os.close(errpipe_write)
+
+            self._close_pipe_fds(p2cread, p2cwrite,
+                                 c2pread, c2pwrite,
+                                 errread, errwrite)
+
+            # Wait for exec to fail or succeed; possibly raising an
+            # exception (limited in size)
+            errpipe_data = bytearray()
+            while True:
+                part = os.read(errpipe_read, 50000)
+                errpipe_data += part
+                if not part or len(errpipe_data) > 50000:
+                    break
+        finally:
+            # be sure the FD is closed no matter what
+            os.close(errpipe_read)
+
+        if errpipe_data:
+            try:
+                pid, sts = os.waitpid(self.pid, 0)
+                if pid == self.pid:
+                    self._handle_exitstatus(sts)
+                else:
+                    self.returncode = sys.maxsize
+            except ChildProcessError:
+                pass
+
+            try:
+                exception_name, hex_errno, err_msg = (
+                        errpipe_data.split(b':', 2))
+                # The encoding here should match the encoding
+                # written in by the subprocess implementations
+                # like _posixsubprocess
+                err_msg = err_msg.decode()
+            except ValueError:
+                exception_name = b'SubprocessError'
+                hex_errno = b'0'
+                err_msg = 'Bad exception data from child: {!r}'.format(
+                              bytes(errpipe_data))
+            child_exception_type = getattr(
+                    builtins, exception_name.decode('ascii'),
+                    SubprocessError)
+            if issubclass(child_exception_type, OSError) and hex_errno:
+                errno_num = int(hex_errno, 16)
+                if err_msg == "noexec:chdir":
+                    err_msg = ""
+                    # The error must be from chdir(cwd).
+                    err_filename = cwd
+                elif err_msg == "noexec":
+                    err_msg = ""
+                    err_filename = None
+                else:
+                    err_filename = orig_executable
+                if errno_num != 0:
+                    err_msg = os.strerror(errno_num)
+                if err_filename is not None:
+>                   raise child_exception_type(errno_num, err_msg, err_filename)
+E                   FileNotFoundError: [Errno 2] No such file or directory: 'ninja'
+
+../../../.local/share/uv/python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/subprocess.py:1955: FileNotFoundError
+________________ test_full_input_prefix_still_leaves_one_query _________________
+
+make_scheduler = <function make_scheduler.<locals>.make at 0x71e0e8dcbc40>
+
+    def test_full_input_prefix_still_leaves_one_query(make_scheduler):
+        scheduler = make_scheduler(4, cache_type="radix")
+        ids = torch.arange(10, dtype=torch.int32)
+        seed_prefix(scheduler, ids)
+        add_prefill(scheduler, 2, len(ids), ids=ids)
+>       batch = scheduler._select_next_batch()
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/core/test_mixed_scheduler.py:282:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+python/minisgl/scheduler/scheduler.py:328: in _select_next_batch
+    return schedule_mixed_batch(
+python/minisgl/scheduler/mixed.py:33: in schedule_mixed_batch
+    prefill = prefill_manager.schedule_next_batch(remaining_budget) if remaining_budget else None
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/scheduler/prefill.py:144: in schedule_next_batch
+    if req := adder.try_add_one(pending_req):
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/scheduler/prefill.py:108: in try_add_one
+    if resource := self._try_allocate_one(pending_req):
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/scheduler/prefill.py:48: in _try_allocate_one
+    handle = self.cache_manager.match_req(req).cuda_handle
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/scheduler/cache.py:30: in match_req
+    return self.prefix_cache.match_prefix(req.input_ids[: input_len - 1])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kvcache/radix_cache.py:133: in match_prefix
+    node, prefix_len = self._tree_walk(input_ids)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kvcache/radix_cache.py:218: in _tree_walk
+    match_len = node.get_match_len(input_ids[prefix_len:])
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kvcache/radix_cache.py:67: in get_match_len
+    return fast_compare_key(self._key, input_ids)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kernel/radix.py:20: in fast_compare_key
+    return _load_radix_module().fast_compare_key(x, y)
+           ^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kernel/radix.py:15: in _load_radix_module
+    return load_aot("radix", cpp_files=["radix.cpp"])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kernel/utils.py:75: in load_aot
+    return load(
+../mini-sglang/.venv/lib/python3.12/site-packages/tvm_ffi/cpp/extension.py:1505: in load
+    build(
+../mini-sglang/.venv/lib/python3.12/site-packages/tvm_ffi/cpp/extension.py:1351: in build
+    return _build_impl(
+../mini-sglang/.venv/lib/python3.12/site-packages/tvm_ffi/cpp/extension.py:780: in _build_impl
+    build_ninja(str(build_dir))
+../mini-sglang/.venv/lib/python3.12/site-packages/tvm_ffi/cpp/extension.py:637: in build_ninja
+    status = subprocess.run(check=False, args=command, cwd=build_dir, capture_output=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.local/share/uv/python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/subprocess.py:548: in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.local/share/uv/python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/subprocess.py:1026: in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <Popen: returncode: 255 args: ['ninja', '-v']>, args = ['ninja', '-v']
+executable = b'ninja', preexec_fn = None, close_fds = True, pass_fds = ()
+cwd = '/home/wty238388/.cache/tvm-ffi/minisgl__radix_c7cf4230e797d147'
+env = None, startupinfo = None, creationflags = 0, shell = False, p2cread = -1
+p2cwrite = -1, c2pread = 12, c2pwrite = 13, errread = 14, errwrite = 15
+restore_signals = True, gid = None, gids = None, uid = None, umask = -1
+start_new_session = False, process_group = -1
+
+    def _execute_child(self, args, executable, preexec_fn, close_fds,
+                       pass_fds, cwd, env,
+                       startupinfo, creationflags, shell,
+                       p2cread, p2cwrite,
+                       c2pread, c2pwrite,
+                       errread, errwrite,
+                       restore_signals,
+                       gid, gids, uid, umask,
+                       start_new_session, process_group):
+        """Execute program (POSIX version)"""
+
+        if isinstance(args, (str, bytes)):
+            args = [args]
+        elif isinstance(args, os.PathLike):
+            if shell:
+                raise TypeError('path-like args is not allowed when '
+                                'shell is true')
+            args = [args]
+        else:
+            args = list(args)
+
+        if shell:
+            # On Android the default shell is at '/system/bin/sh'.
+            unix_shell = ('/system/bin/sh' if
+                      hasattr(sys, 'getandroidapilevel') else '/bin/sh')
+            args = [unix_shell, "-c"] + args
+            if executable:
+                args[0] = executable
+
+        if executable is None:
+            executable = args[0]
+
+        sys.audit("subprocess.Popen", executable, args, cwd, env)
+
+        if (_USE_POSIX_SPAWN
+                and os.path.dirname(executable)
+                and preexec_fn is None
+                and not close_fds
+                and not pass_fds
+                and cwd is None
+                and (p2cread == -1 or p2cread > 2)
+                and (c2pwrite == -1 or c2pwrite > 2)
+                and (errwrite == -1 or errwrite > 2)
+                and not start_new_session
+                and process_group == -1
+                and gid is None
+                and gids is None
+                and uid is None
+                and umask < 0):
+            self._posix_spawn(args, executable, env, restore_signals,
+                              p2cread, p2cwrite,
+                              c2pread, c2pwrite,
+                              errread, errwrite)
+            return
+
+        orig_executable = executable
+
+        # For transferring possible exec failure from child to parent.
+        # Data format: "exception name:hex errno:description"
+        # Pickle is not used; it is complex and involves memory allocation.
+        errpipe_read, errpipe_write = os.pipe()
+        # errpipe_write must not be in the standard io 0, 1, or 2 fd range.
+        low_fds_to_close = []
+        while errpipe_write < 3:
+            low_fds_to_close.append(errpipe_write)
+            errpipe_write = os.dup(errpipe_write)
+        for low_fd in low_fds_to_close:
+            os.close(low_fd)
+        try:
+            try:
+                # We must avoid complex work that could involve
+                # malloc or free in the child process to avoid
+                # potential deadlocks, thus we do all this here.
+                # and pass it to fork_exec()
+
+                if env is not None:
+                    env_list = []
+                    for k, v in env.items():
+                        k = os.fsencode(k)
+                        if b'=' in k:
+                            raise ValueError("illegal environment variable name")
+                        env_list.append(k + b'=' + os.fsencode(v))
+                else:
+                    env_list = None  # Use execv instead of execve.
+                executable = os.fsencode(executable)
+                if os.path.dirname(executable):
+                    executable_list = (executable,)
+                else:
+                    # This matches the behavior of os._execvpe().
+                    executable_list = tuple(
+                        os.path.join(os.fsencode(dir), executable)
+                        for dir in os.get_exec_path(env))
+                fds_to_keep = set(pass_fds)
+                fds_to_keep.add(errpipe_write)
+                self.pid = _fork_exec(
+                        args, executable_list,
+                        close_fds, tuple(sorted(map(int, fds_to_keep))),
+                        cwd, env_list,
+                        p2cread, p2cwrite, c2pread, c2pwrite,
+                        errread, errwrite,
+                        errpipe_read, errpipe_write,
+                        restore_signals, start_new_session,
+                        process_group, gid, gids, uid, umask,
+                        preexec_fn, _USE_VFORK)
+                self._child_created = True
+            finally:
+                # be sure the FD is closed no matter what
+                os.close(errpipe_write)
+
+            self._close_pipe_fds(p2cread, p2cwrite,
+                                 c2pread, c2pwrite,
+                                 errread, errwrite)
+
+            # Wait for exec to fail or succeed; possibly raising an
+            # exception (limited in size)
+            errpipe_data = bytearray()
+            while True:
+                part = os.read(errpipe_read, 50000)
+                errpipe_data += part
+                if not part or len(errpipe_data) > 50000:
+                    break
+        finally:
+            # be sure the FD is closed no matter what
+            os.close(errpipe_read)
+
+        if errpipe_data:
+            try:
+                pid, sts = os.waitpid(self.pid, 0)
+                if pid == self.pid:
+                    self._handle_exitstatus(sts)
+                else:
+                    self.returncode = sys.maxsize
+            except ChildProcessError:
+                pass
+
+            try:
+                exception_name, hex_errno, err_msg = (
+                        errpipe_data.split(b':', 2))
+                # The encoding here should match the encoding
+                # written in by the subprocess implementations
+                # like _posixsubprocess
+                err_msg = err_msg.decode()
+            except ValueError:
+                exception_name = b'SubprocessError'
+                hex_errno = b'0'
+                err_msg = 'Bad exception data from child: {!r}'.format(
+                              bytes(errpipe_data))
+            child_exception_type = getattr(
+                    builtins, exception_name.decode('ascii'),
+                    SubprocessError)
+            if issubclass(child_exception_type, OSError) and hex_errno:
+                errno_num = int(hex_errno, 16)
+                if err_msg == "noexec:chdir":
+                    err_msg = ""
+                    # The error must be from chdir(cwd).
+                    err_filename = cwd
+                elif err_msg == "noexec":
+                    err_msg = ""
+                    err_filename = None
+                else:
+                    err_filename = orig_executable
+                if errno_num != 0:
+                    err_msg = os.strerror(errno_num)
+                if err_filename is not None:
+>                   raise child_exception_type(errno_num, err_msg, err_filename)
+E                   FileNotFoundError: [Errno 2] No such file or directory: 'ninja'
+
+../../../.local/share/uv/python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/subprocess.py:1955: FileNotFoundError
+_________________ test_prefix_lock_capacity_recheck_rolls_back _________________
+
+make_scheduler = <function make_scheduler.<locals>.make at 0x71e0e8d87100>
+
+    def test_prefix_lock_capacity_recheck_rolls_back(make_scheduler):
+        scheduler = make_scheduler(16, pages=16, cache_type="radix")
+        ids = torch.arange(12, dtype=torch.int32)
+        seed_prefix(scheduler, ids[:8])
+        add_prefill(scheduler, 1, len(ids), output_len=5, ids=ids)
+        assert scheduler.cache_manager.available_size == 16
+>       assert scheduler._select_next_batch() is None  # 4 + 5 > 8 free after locking prefix
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/core/test_mixed_scheduler.py:395:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+python/minisgl/scheduler/scheduler.py:328: in _select_next_batch
+    return schedule_mixed_batch(
+python/minisgl/scheduler/mixed.py:33: in schedule_mixed_batch
+    prefill = prefill_manager.schedule_next_batch(remaining_budget) if remaining_budget else None
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/scheduler/prefill.py:144: in schedule_next_batch
+    if req := adder.try_add_one(pending_req):
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/scheduler/prefill.py:108: in try_add_one
+    if resource := self._try_allocate_one(pending_req):
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/scheduler/prefill.py:48: in _try_allocate_one
+    handle = self.cache_manager.match_req(req).cuda_handle
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/scheduler/cache.py:30: in match_req
+    return self.prefix_cache.match_prefix(req.input_ids[: input_len - 1])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kvcache/radix_cache.py:133: in match_prefix
+    node, prefix_len = self._tree_walk(input_ids)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kvcache/radix_cache.py:218: in _tree_walk
+    match_len = node.get_match_len(input_ids[prefix_len:])
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kvcache/radix_cache.py:67: in get_match_len
+    return fast_compare_key(self._key, input_ids)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kernel/radix.py:20: in fast_compare_key
+    return _load_radix_module().fast_compare_key(x, y)
+           ^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kernel/radix.py:15: in _load_radix_module
+    return load_aot("radix", cpp_files=["radix.cpp"])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python/minisgl/kernel/utils.py:75: in load_aot
+    return load(
+../mini-sglang/.venv/lib/python3.12/site-packages/tvm_ffi/cpp/extension.py:1505: in load
+    build(
+../mini-sglang/.venv/lib/python3.12/site-packages/tvm_ffi/cpp/extension.py:1351: in build
+    return _build_impl(
+../mini-sglang/.venv/lib/python3.12/site-packages/tvm_ffi/cpp/extension.py:780: in _build_impl
+    build_ninja(str(build_dir))
+../mini-sglang/.venv/lib/python3.12/site-packages/tvm_ffi/cpp/extension.py:637: in build_ninja
+    status = subprocess.run(check=False, args=command, cwd=build_dir, capture_output=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.local/share/uv/python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/subprocess.py:548: in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.local/share/uv/python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/subprocess.py:1026: in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <Popen: returncode: 255 args: ['ninja', '-v']>, args = ['ninja', '-v']
+executable = b'ninja', preexec_fn = None, close_fds = True, pass_fds = ()
+cwd = '/home/wty238388/.cache/tvm-ffi/minisgl__radix_c7cf4230e797d147'
+env = None, startupinfo = None, creationflags = 0, shell = False, p2cread = -1
+p2cwrite = -1, c2pread = 12, c2pwrite = 13, errread = 14, errwrite = 15
+restore_signals = True, gid = None, gids = None, uid = None, umask = -1
+start_new_session = False, process_group = -1
+
+    def _execute_child(self, args, executable, preexec_fn, close_fds,
+                       pass_fds, cwd, env,
+                       startupinfo, creationflags, shell,
+                       p2cread, p2cwrite,
+                       c2pread, c2pwrite,
+                       errread, errwrite,
+                       restore_signals,
+                       gid, gids, uid, umask,
+                       start_new_session, process_group):
+        """Execute program (POSIX version)"""
+
+        if isinstance(args, (str, bytes)):
+            args = [args]
+        elif isinstance(args, os.PathLike):
+            if shell:
+                raise TypeError('path-like args is not allowed when '
+                                'shell is true')
+            args = [args]
+        else:
+            args = list(args)
+
+        if shell:
+            # On Android the default shell is at '/system/bin/sh'.
+            unix_shell = ('/system/bin/sh' if
+                      hasattr(sys, 'getandroidapilevel') else '/bin/sh')
+            args = [unix_shell, "-c"] + args
+            if executable:
+                args[0] = executable
+
+        if executable is None:
+            executable = args[0]
+
+        sys.audit("subprocess.Popen", executable, args, cwd, env)
+
+        if (_USE_POSIX_SPAWN
+                and os.path.dirname(executable)
+                and preexec_fn is None
+                and not close_fds
+                and not pass_fds
+                and cwd is None
+                and (p2cread == -1 or p2cread > 2)
+                and (c2pwrite == -1 or c2pwrite > 2)
+                and (errwrite == -1 or errwrite > 2)
+                and not start_new_session
+                and process_group == -1
+                and gid is None
+                and gids is None
+                and uid is None
+                and umask < 0):
+            self._posix_spawn(args, executable, env, restore_signals,
+                              p2cread, p2cwrite,
+                              c2pread, c2pwrite,
+                              errread, errwrite)
+            return
+
+        orig_executable = executable
+
+        # For transferring possible exec failure from child to parent.
+        # Data format: "exception name:hex errno:description"
+        # Pickle is not used; it is complex and involves memory allocation.
+        errpipe_read, errpipe_write = os.pipe()
+        # errpipe_write must not be in the standard io 0, 1, or 2 fd range.
+        low_fds_to_close = []
+        while errpipe_write < 3:
+            low_fds_to_close.append(errpipe_write)
+            errpipe_write = os.dup(errpipe_write)
+        for low_fd in low_fds_to_close:
+            os.close(low_fd)
+        try:
+            try:
+                # We must avoid complex work that could involve
+                # malloc or free in the child process to avoid
+                # potential deadlocks, thus we do all this here.
+                # and pass it to fork_exec()
+
+                if env is not None:
+                    env_list = []
+                    for k, v in env.items():
+                        k = os.fsencode(k)
+                        if b'=' in k:
+                            raise ValueError("illegal environment variable name")
+                        env_list.append(k + b'=' + os.fsencode(v))
+                else:
+                    env_list = None  # Use execv instead of execve.
+                executable = os.fsencode(executable)
+                if os.path.dirname(executable):
+                    executable_list = (executable,)
+                else:
+                    # This matches the behavior of os._execvpe().
+                    executable_list = tuple(
+                        os.path.join(os.fsencode(dir), executable)
+                        for dir in os.get_exec_path(env))
+                fds_to_keep = set(pass_fds)
+                fds_to_keep.add(errpipe_write)
+                self.pid = _fork_exec(
+                        args, executable_list,
+                        close_fds, tuple(sorted(map(int, fds_to_keep))),
+                        cwd, env_list,
+                        p2cread, p2cwrite, c2pread, c2pwrite,
+                        errread, errwrite,
+                        errpipe_read, errpipe_write,
+                        restore_signals, start_new_session,
+                        process_group, gid, gids, uid, umask,
+                        preexec_fn, _USE_VFORK)
+                self._child_created = True
+            finally:
+                # be sure the FD is closed no matter what
+                os.close(errpipe_write)
+
+            self._close_pipe_fds(p2cread, p2cwrite,
+                                 c2pread, c2pwrite,
+                                 errread, errwrite)
+
+            # Wait for exec to fail or succeed; possibly raising an
+            # exception (limited in size)
+            errpipe_data = bytearray()
+            while True:
+                part = os.read(errpipe_read, 50000)
+                errpipe_data += part
+                if not part or len(errpipe_data) > 50000:
+                    break
+        finally:
+            # be sure the FD is closed no matter what
+            os.close(errpipe_read)
+
+        if errpipe_data:
+            try:
+                pid, sts = os.waitpid(self.pid, 0)
+                if pid == self.pid:
+                    self._handle_exitstatus(sts)
+                else:
+                    self.returncode = sys.maxsize
+            except ChildProcessError:
+                pass
+
+            try:
+                exception_name, hex_errno, err_msg = (
+                        errpipe_data.split(b':', 2))
+                # The encoding here should match the encoding
+                # written in by the subprocess implementations
+                # like _posixsubprocess
+                err_msg = err_msg.decode()
+            except ValueError:
+                exception_name = b'SubprocessError'
+                hex_errno = b'0'
+                err_msg = 'Bad exception data from child: {!r}'.format(
+                              bytes(errpipe_data))
+            child_exception_type = getattr(
+                    builtins, exception_name.decode('ascii'),
+                    SubprocessError)
+            if issubclass(child_exception_type, OSError) and hex_errno:
+                errno_num = int(hex_errno, 16)
+                if err_msg == "noexec:chdir":
+                    err_msg = ""
+                    # The error must be from chdir(cwd).
+                    err_filename = cwd
+                elif err_msg == "noexec":
+                    err_msg = ""
+                    err_filename = None
+                else:
+                    err_filename = orig_executable
+                if errno_num != 0:
+                    err_msg = os.strerror(errno_num)
+                if err_filename is not None:
+>                   raise child_exception_type(errno_num, err_msg, err_filename)
+E                   FileNotFoundError: [Errno 2] No such file or directory: 'ninja'
+
+../../../.local/share/uv/python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/subprocess.py:1955: FileNotFoundError
+=========================== short test summary info ============================
+FAILED tests/core/test_mixed_lifecycle.py::test_overlap_termination_uses_snapshot_and_sends_finished_once
+FAILED tests/core/test_mixed_lifecycle.py::test_ignore_eos_keeps_original_meaning[True]
+FAILED tests/core/test_mixed_lifecycle.py::test_duplicate_prefix_remaps_live_page_table_before_freed_pages_reuse
+FAILED tests/core/test_mixed_scheduler.py::test_real_prefix_match_changes_query_length[7]
+FAILED tests/core/test_mixed_scheduler.py::test_real_prefix_match_changes_query_length[9]
+FAILED tests/core/test_mixed_scheduler.py::test_full_input_prefix_still_leaves_one_query
+FAILED tests/core/test_mixed_scheduler.py::test_prefix_lock_capacity_recheck_rolls_back
+7 failed, 96 passed in 6.71s

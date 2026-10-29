@@ -1,0 +1,27 @@
+
+==================================== ERRORS ====================================
+_____________ ERROR collecting tests/core/test_mixed_lifecycle.py ______________
+ImportError while importing test module '/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/tests/core/test_mixed_lifecycle.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+../../../.local/share/uv/python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/core/test_mixed_lifecycle.py:16: in <module>
+    from minisgl.core import Batch, BatchLayout, Req, SamplingParams
+E   ImportError: cannot import name 'BatchLayout' from 'minisgl.core' (/home/wty238388/ai-infra/Serving_V1/mini-sglang/python/minisgl/core.py)
+_____________ ERROR collecting tests/core/test_mixed_scheduler.py ______________
+ImportError while importing test module '/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/tests/core/test_mixed_scheduler.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+../../../.local/share/uv/python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/core/test_mixed_scheduler.py:16: in <module>
+    from minisgl.core import Batch, BatchLayout, Req, SamplingParams
+E   ImportError: cannot import name 'BatchLayout' from 'minisgl.core' (/home/wty238388/ai-infra/Serving_V1/mini-sglang/python/minisgl/core.py)
+=========================== short test summary info ============================
+ERROR tests/core/test_mixed_lifecycle.py
+ERROR tests/core/test_mixed_scheduler.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 2 errors during collection !!!!!!!!!!!!!!!!!!!!
+2 errors in 2.84s

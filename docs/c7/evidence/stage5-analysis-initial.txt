@@ -1,0 +1,1 @@
+Analyzed 2 trials; missing=0; kind=smoke_correctness

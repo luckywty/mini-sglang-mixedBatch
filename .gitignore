@@ -31,3 +31,6 @@ env/
 # .vscode
 .vscode/
 .coverage
+
+# C7 generated workloads, logs, and trial artifacts
+/artifacts/c7/

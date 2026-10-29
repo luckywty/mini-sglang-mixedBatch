@@ -1,0 +1,2 @@
+{'scenario': 'interference', 'policy': 'baseline', 'repeat': 0, 'status': 'COMPLETE', 'errors': []}
+{'scenario': 'interference', 'policy': 'mixed', 'repeat': 0, 'status': 'COMPLETE', 'errors': []}
