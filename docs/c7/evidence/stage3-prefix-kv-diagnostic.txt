@@ -1,0 +1,21 @@
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[1m[2026-10-28|21:47:51|core|rank=0][0m [32mINFO    [0m Free memory before loading model: 4.99 GiB
+Loading weights:   0%|          | 0/1 [00:00<?, ?it/s]Loading weights: 100%|██████████| 1/1 [00:01<00:00,  1.61s/it]Loading weights: 100%|██████████| 1/1 [00:01<00:00,  1.61s/it]
+[1m[2026-10-28|21:47:54|core|rank=0][0m [32mINFO    [0m Allocating 768 tokens for KV cache, K + V = 0.08 GiB
+[1m[2026-10-28|21:47:54|core|rank=0][0m [32mINFO    [0m Free memory after initialization: 3.57 GiB
+[1m[2026-10-28|21:47:54|core|rank=0][0m [32mINFO    [0m Start capturing CUDA graphs with sizes: [2]
+[1m[2026-10-28|21:47:54|core|rank=0][0m [32mINFO    [0m Free GPU memory before capturing CUDA graphs: 3.57 GiB
+Preparing for capturing CUDA graphs...:   0%|          | 0/1 [00:00<?, ?batch/s]Capturing graphs: bs = 2   | avail_mem = 3.57 GiB:   0%|          | 0/1 [00:00<?, ?batch/s]Capturing graphs: bs = 2   | avail_mem = 3.57 GiB: 100%|██████████| 1/1 [00:01<00:00,  1.27s/batch]Capturing graphs: bs = 2   | avail_mem = 3.57 GiB: 100%|██████████| 1/1 [00:01<00:00,  1.27s/batch]
+[1m[2026-10-28|21:47:56|core|rank=0][0m [32mINFO    [0m Free GPU memory after capturing CUDA graphs: 3.53 GiB
+C7_PREFIX_TOKENS {"baseline": [198, 13874, 19324], "mixed": [198, 13874, 19324]}
+C7_PREFIX_LOGITS {"output": 0, "max_abs": 0.0, "violations": 0, "atol": 0.1, "rtol": 0.01}
+C7_PREFIX_LOGITS {"output": 1, "max_abs": 0.0, "violations": 0, "atol": 0.1, "rtol": 0.01}
+C7_PREFIX_LOGITS {"output": 2, "max_abs": 0.21875, "violations": 1512, "atol": 0.1, "rtol": 0.01}
+C7_PREFIX_STRICT_NUMERICAL FAIL
+C7_PREFIX_KV_SOURCE {"initial_canonical_equal": true, "mixed_third_uses_canonical_prompt": true, "baseline_third_keeps_recomputed_prompt": true, "prompt_kv_recomputed_vs_canonical_max_abs": 1.75}
+C7_PREFIX_KV_DIFF {"output": 0, "different_positions": [], "max_abs": 0.0}
+C7_PREFIX_KV_DIFF {"output": 1, "different_positions": [], "max_abs": 0.0}
+C7_PREFIX_KV_DIFF {"output": 2, "different_positions": [5, 7], "max_abs": 1.75}
+C7_CANONICAL_CONTROL {"output": 0, "max_abs": 0.0}
+C7_CANONICAL_CONTROL {"output": 1, "max_abs": 0.0}
+C7_CANONICAL_CONTROL {"output": 2, "max_abs": 0.0}

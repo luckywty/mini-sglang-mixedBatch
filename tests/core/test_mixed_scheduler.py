@@ -20,6 +20,7 @@ from minisgl.message import AbortBackendMsg, UserMsg
 from minisgl.scheduler import Scheduler, SchedulerConfig
 from minisgl.scheduler.cache import CacheManager
 from minisgl.scheduler.decode import DecodeManager
+from minisgl.scheduler.lifecycle import MixedLifecycle
 from minisgl.scheduler.mixed import schedule_mixed_batch
 from minisgl.scheduler.prefill import ChunkedReq, PrefillManager
 from minisgl.scheduler.scheduler import _make_input_tuple, _make_positions
@@ -60,6 +61,8 @@ def make_scheduler():
         )
         scheduler.prefill_budget = budget
         scheduler.enable_mixed_batching = enabled
+        scheduler.mixed_lifecycle = MixedLifecycle()
+        scheduler._wait_for_engine = lambda: None  # CPU storage boundary; no GPU is in flight.
         return scheduler
 
     return make
@@ -90,8 +93,10 @@ def add_prefill(scheduler, uid, length, *, output_len=8, ids=None):
 def advance_request_state(scheduler, batch):
     """Emulate existing Engine's state advance, without pretending to sample."""
     scheduler.cache_manager.allocate_paged(batch.reqs)
-    for req in batch.reqs:
-        req.complete_one()
+    scheduler.mixed_lifecycle.register(batch.reqs)
+    for req, length, sample in zip(batch.reqs, batch.layout.kv_lens, batch.layout.sample_mask):
+        req.cached_len = length
+        req.device_len = length + int(sample)
     scheduler.decode_manager.filter_reqs(batch.reqs)
 
 
@@ -324,7 +329,7 @@ def test_layout_snapshot_survives_mutable_request_advance(make_scheduler):
     assert layout.cached_lens == (4, 0)
     assert layout.kv_lens == (5, 7)
     assert layout.sample_mask == (True, False)
-    assert batch.reqs[1].cached_len == 7 and batch.reqs[1].device_len == 8
+    assert batch.reqs[1].cached_len == 7 and batch.reqs[1].device_len == 7
     with pytest.raises(FrozenInstanceError):
         layout.sample_mask = (True, True)
 
@@ -474,7 +479,7 @@ def test_default_config_keeps_baseline_compatibility():
     assert replace(config, attention_backend="auto", page_size=4).page_size == 4
 
 
-def test_cli_mixed_flag_and_runtime_gate_do_not_initialize_model():
+def test_cli_mixed_flag_reaches_engine_initialization(monkeypatch):
     config, _ = parse_args(
         [
             "--model",
@@ -489,19 +494,25 @@ def test_cli_mixed_flag_and_runtime_gate_do_not_initialize_model():
         ]
     )
     assert config.enable_mixed_batching is True and config.max_extend_tokens == 128
-    with pytest.raises(NotImplementedError, match="stage 1 implements mixed batch selection only"):
+
+    def stop_before_gpu(config):
+        raise RuntimeError("Reached Engine initialization")
+
+    monkeypatch.setattr("minisgl.engine.Engine", stop_before_gpu)
+    with pytest.raises(RuntimeError, match="Reached Engine initialization"):
         Scheduler(config)
 
 
-def test_prepare_gate_blocks_all_new_layouts_before_allocation(make_scheduler):
+def test_prepare_rejects_missing_layout_or_disabled_switch(make_scheduler):
     scheduler = make_scheduler()
     add_decode(scheduler, 1)
     batch = scheduler._select_next_batch()
-    # No Engine exists, so this must fail before graph padding or page allocation.
-    with pytest.raises(NotImplementedError, match="cannot execute"):
-        scheduler._prepare_batch(batch)
-    with pytest.raises(NotImplementedError, match="cannot execute"):
+    # Invalid inputs still fail before graph padding or page allocation.
+    with pytest.raises(ValueError, match="layout for every batch"):
         scheduler._prepare_batch(Batch(batch.reqs, "mixed"))
+    scheduler.enable_mixed_batching = False
+    with pytest.raises(ValueError, match="enable_mixed_batching=True"):
+        scheduler._prepare_batch(batch)
 
 
 def test_mixed_never_qualifies_for_existing_decode_graph(make_scheduler):

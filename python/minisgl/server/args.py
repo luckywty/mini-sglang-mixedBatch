@@ -173,7 +173,7 @@ def parse_args(args: List[str], run_shell: bool = False) -> Tuple[ServerArgs, bo
     parser.add_argument(
         "--enable-mixed-batching",
         action="store_true",
-        help="C7 mixed scheduling (stage 1: CPU selection only; model execution is not yet available). "
+        help="Enable decode-first mixed prefill/decode batching (mixed forwards run eagerly). "
         "Requires --attention-backend fi --page-size 1 --tp-size 1. "
         "Uses --max-extend-length as the total prefill + decode token budget.",
     )

@@ -230,8 +230,8 @@ class FlashInferBackend(BaseAttnBackend):
     def _prepare_mixed_metadata(self, batch: Batch) -> None:
         """Use the unpadded scheduling snapshot for eager paged prefill attention.
 
-        The scheduler execution gate remains in place until sampling/output handling
-        is implemented. This entry is also used by isolated attention validation.
+        Sampling/output handling consumes the same frozen layout. Mixed batches
+        remain eager; pure Decode keeps its existing graph path.
         """
         ctx, layout = get_global_ctx(), batch.layout
         if ctx.page_size != 1 or get_tp_info().size != 1:

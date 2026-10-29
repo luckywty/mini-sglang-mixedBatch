@@ -1,0 +1,4 @@
+Original baseline -> stage 3 (eager-no-overlap): batch trace, outputs, allocated-memory peak and completion checks MATCH
+Stage 3 mixed (eager-no-overlap): natural greedy tokens match original baseline; true mixed forward and lifecycle checks PASS
+Original baseline -> stage 3 (graph-overlap): batch trace, outputs, allocated-memory peak and completion checks MATCH
+Stage 3 mixed (graph-overlap): natural greedy tokens match original baseline; true mixed forward and lifecycle checks PASS

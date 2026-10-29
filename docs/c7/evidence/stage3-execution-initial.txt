@@ -1,0 +1,74 @@
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[1m[2026-10-28|21:23:57|core|rank=0][0m [32mINFO    [0m Free memory before loading model: 4.99 GiB
+Loading weights:   0%|          | 0/1 [00:00<?, ?it/s]Loading weights: 100%|██████████| 1/1 [00:01<00:00,  1.52s/it]Loading weights: 100%|██████████| 1/1 [00:01<00:00,  1.52s/it]
+[1m[2026-10-28|21:24:00|core|rank=0][0m [32mINFO    [0m Allocating 768 tokens for KV cache, K + V = 0.08 GiB
+[1m[2026-10-28|21:24:00|core|rank=0][0m [32mINFO    [0m Free memory after initialization: 3.57 GiB
+[1m[2026-10-28|21:24:00|core|rank=0][0m [32mINFO    [0m Start capturing CUDA graphs with sizes: [2]
+[1m[2026-10-28|21:24:00|core|rank=0][0m [32mINFO    [0m Free GPU memory before capturing CUDA graphs: 3.57 GiB
+Preparing for capturing CUDA graphs...:   0%|          | 0/1 [00:00<?, ?batch/s]Capturing graphs: bs = 2   | avail_mem = 3.57 GiB:   0%|          | 0/1 [00:00<?, ?batch/s]Capturing graphs: bs = 2   | avail_mem = 3.57 GiB: 100%|██████████| 1/1 [00:01<00:00,  1.28s/batch]Capturing graphs: bs = 2   | avail_mem = 3.57 GiB: 100%|██████████| 1/1 [00:01<00:00,  1.28s/batch]
+[1m[2026-10-28|21:24:01|core|rank=0][0m [32mINFO    [0m Free GPU memory after capturing CUDA graphs: 3.53 GiB
+.F
+=================================== FAILURES ===================================
+___ test_mixed_sampling_rows_intermediate_writeback_and_graph_padding[True] ____
+
+driver = <test_mixed_execution.Driver object at 0x7b80971118b0>, overlap = True
+
+    @pytest.mark.parametrize("overlap", [False, True])
+    def test_mixed_sampling_rows_intermediate_writeback_and_graph_padding(driver, overlap):
+        driver.overlap = overlap
+        driver.forced = lambda uid, step: uid * 100 + step
+        driver.add(1, [10, 11, 12], 6)
+        driver.add(2, list(range(20, 49)), 3)
+        driver.drain()
+        assert_outputs(driver, {1: list(range(100, 106)), 2: [200, 201, 202]})
+        assert any(row["phase"] == "mixed" for row in driver.traces)
+        assert any(row["graph"] and len(row["uids"]) == 1 and row["padded_size"] == 2 for row in driver.traces)
+>       assert driver.middle_writes and all(int(value) == -777 for value in driver.middle_writes)
+E       AssertionError: assert ([tensor(25, device='cuda:0', dtype=torch.int32), tensor(-777, device='cuda:0', dtype=torch.int32), tensor(-777, device...=torch.int32), tensor(-777, device='cuda:0', dtype=torch.int32), tensor(-777, device='cuda:0', dtype=torch.int32), ...] and False)
+E        +  where [tensor(25, device='cuda:0', dtype=torch.int32), tensor(-777, device='cuda:0', dtype=torch.int32), tensor(-777, device...=torch.int32), tensor(-777, device='cuda:0', dtype=torch.int32), tensor(-777, device='cuda:0', dtype=torch.int32), ...] = <test_mixed_execution.Driver object at 0x7b80971118b0>.middle_writes
+E        +  and   False = all(<generator object test_mixed_sampling_rows_intermediate_writeback_and_graph_padding.<locals>.<genexpr> at 0x7b8062d1a260>)
+
+tests/engine/test_mixed_execution.py:181: AssertionError
+=============================== warnings summary ===============================
+tests/engine/test_mixed_execution.py::test_mixed_sampling_rows_intermediate_writeback_and_graph_padding[False]
+  /home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/flashinfer/fused_moe/cute_dsl/blackwell/blockscaled_contiguous_gather_grouped_gemm_act_fusion.py:3197: DeprecationWarning: cutlass.utils.LayoutEnum is deprecated; use cutlass.tensor_utils.LayoutEnum instead. It will be removed in a future release.
+    c_layout: utils.LayoutEnum,
+
+tests/engine/test_mixed_execution.py::test_mixed_sampling_rows_intermediate_writeback_and_graph_padding[False]
+  /home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/flashinfer/gemm/kernels/grouped_gemm_masked_blackwell.py:429: DeprecationWarning: cutlass.utils.LayoutEnum is deprecated; use cutlass.tensor_utils.LayoutEnum instead. It will be removed in a future release.
+    epi_layout: utils.LayoutEnum,
+
+tests/engine/test_mixed_execution.py::test_mixed_sampling_rows_intermediate_writeback_and_graph_padding[False]
+  /home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/flashinfer/gemm/kernels/grouped_gemm_masked_blackwell.py:2393: DeprecationWarning: cutlass.utils.LayoutEnum is deprecated; use cutlass.tensor_utils.LayoutEnum instead. It will be removed in a future release.
+    c_layout: utils.LayoutEnum,
+
+tests/engine/test_mixed_execution.py::test_mixed_sampling_rows_intermediate_writeback_and_graph_padding[False]
+tests/engine/test_mixed_execution.py::test_mixed_sampling_rows_intermediate_writeback_and_graph_padding[False]
+  /home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/flashinfer/gdn_kernels/blackwell/gated_delta_net_chunked.py:95: DeprecationWarning: cutlass.utils.TensorMapUpdateMode is deprecated; use cutlass.tensor_utils.TensorMapUpdateMode instead. It will be removed in a future release.
+    from cutlass.utils import TensorMapManager, TensorMapUpdateMode
+
+tests/engine/test_mixed_execution.py::test_mixed_sampling_rows_intermediate_writeback_and_graph_padding[False]
+  /home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/flashinfer/gdn_kernels/delta_rule_dsl/collective_store_tma.py:6: DeprecationWarning: cutlass.utils.tensormap_manager.TensorMapUpdateMode is deprecated; use cutlass.tensor_utils.TensorMapUpdateMode instead. It will be removed in a future release.
+    from cutlass.utils.tensormap_manager import TensorMapManager, TensorMapUpdateMode
+
+tests/engine/test_mixed_execution.py::test_mixed_sampling_rows_intermediate_writeback_and_graph_padding[False]
+  /home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/flashinfer/cute_dsl/utils.py:86: DeprecationWarning: Arch from arch.py is deprecated. Use Arch from enums.py instead.
+    from cutlass.base_dsl.arch import Arch
+
+tests/engine/test_mixed_execution.py::test_mixed_sampling_rows_intermediate_writeback_and_graph_padding[False]
+  /home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/flashinfer/norm/kernels/rmsnorm.py:267: DeprecationWarning: cutlass.utils.smem_allocator.SmemAllocator is deprecated; use cutlass.memory.SmemAllocator instead. It will be removed in a future release.
+    smem = cutlass.utils.SmemAllocator()
+
+tests/engine/test_mixed_execution.py::test_mixed_sampling_rows_intermediate_writeback_and_graph_padding[False]
+  /home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/flashinfer/norm/kernels/rmsnorm.py:546: DeprecationWarning: cutlass.utils.smem_allocator.SmemAllocator is deprecated; use cutlass.memory.SmemAllocator instead. It will be removed in a future release.
+    smem = cutlass.utils.SmemAllocator()
+
+tests/engine/test_mixed_execution.py::test_mixed_sampling_rows_intermediate_writeback_and_graph_padding[False]
+  /home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/flashinfer/norm/kernels/fused_add_rmsnorm.py:251: DeprecationWarning: cutlass.utils.smem_allocator.SmemAllocator is deprecated; use cutlass.memory.SmemAllocator instead. It will be removed in a future release.
+    smem = cutlass.utils.SmemAllocator()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/engine/test_mixed_execution.py::test_mixed_sampling_rows_intermediate_writeback_and_graph_padding[True]
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 1 passed, 10 warnings in 9.01s

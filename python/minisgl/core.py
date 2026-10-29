@@ -161,6 +161,8 @@ class Batch:
     positions: torch.Tensor = field(init=False)
     out_loc: torch.Tensor = field(init=False)
     padded_reqs: List[Req] = field(init=False)
+    # Opt-in execution: packed hidden rows that actually need sampling (not graph padding).
+    sample_hidden_indices: torch.Tensor = field(init=False)
     # this field should be set by attention backend
     attn_metadata: BaseAttnMetadata = field(init=False)
 

@@ -1,0 +1,122 @@
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[1m[2026-10-28|21:41:32|core|rank=0][0m [32mINFO    [0m Free memory before loading model: 4.99 GiB
+Loading weights:   0%|          | 0/1 [00:00<?, ?it/s]Loading weights: 100%|██████████| 1/1 [00:01<00:00,  1.20s/it]Loading weights: 100%|██████████| 1/1 [00:01<00:00,  1.20s/it]
+[1m[2026-10-28|21:41:35|core|rank=0][0m [32mINFO    [0m Allocating 768 tokens for KV cache, K + V = 0.08 GiB
+[1m[2026-10-28|21:41:35|core|rank=0][0m [32mINFO    [0m Free memory after initialization: 3.57 GiB
+[1m[2026-10-28|21:41:35|core|rank=0][0m [32mINFO    [0m Start capturing CUDA graphs with sizes: [2]
+[1m[2026-10-28|21:41:35|core|rank=0][0m [32mINFO    [0m Free GPU memory before capturing CUDA graphs: 3.57 GiB
+Preparing for capturing CUDA graphs...:   0%|          | 0/1 [00:00<?, ?batch/s]Capturing graphs: bs = 2   | avail_mem = 3.57 GiB:   0%|          | 0/1 [00:00<?, ?batch/s]Capturing graphs: bs = 2   | avail_mem = 3.57 GiB: 100%|██████████| 1/1 [00:01<00:00,  1.16s/batch]Capturing graphs: bs = 2   | avail_mem = 3.57 GiB: 100%|██████████| 1/1 [00:01<00:00,  1.16s/batch]
+[1m[2026-10-28|21:41:36|core|rank=0][0m [32mINFO    [0m Free GPU memory after capturing CUDA graphs: 3.53 GiB
+.......C7_LOGITS duplicate uid=1 output=0 max_abs=0.0
+C7_LOGITS duplicate uid=1 output=1 max_abs=0.0
+C7_LOGITS duplicate uid=1 output=2 max_abs=0.0
+C7_LOGITS duplicate uid=2 output=0 max_abs=0.0
+C7_LOGITS duplicate uid=2 output=1 max_abs=0.0
+C7_LOGITS duplicate uid=2 output=2 max_abs=0.0
+C7_LOGITS duplicate uid=3 output=0 max_abs=0.0
+C7_LOGITS duplicate uid=3 output=1 max_abs=0.0
+C7_LOGITS duplicate uid=3 output=2 max_abs=0.0
+C7_HIT_LOGITS output=0 max_abs=0.0 violations=0
+C7_HIT_LOGITS output=1 max_abs=0.0 violations=0
+C7_HIT_LOGITS output=2 max_abs=0.21875 violations=1512
+F
+=================================== FAILURES ===================================
+____ test_duplicate_prefix_page_reuse_and_prefix_hit_match_baseline_logits _____
+
+driver = <test_mixed_execution.Driver object at 0x78653daf8f20>
+
+    def test_duplicate_prefix_page_reuse_and_prefix_hit_match_baseline_logits(driver):
+        prompt = [100, 101, 102, 103, 104, 105]
+        # Match packed matrix shapes against the disabled baseline. A separate
+        # diagnostic records pre-existing single-vs-batch BF16 numerical drift.
+        driver.overlap = False
+        driver.enable_mixed_batching = False
+        driver.prefill_budget = 24
+        for uid in (1, 2, 3):
+            driver.add(uid, prompt, 3)
+        driver.drain()
+        expected_tokens = [message.next_token for message in driver.events if message.uid == 1]
+        expected_logits = {
+            uid: [value.float().cpu() for value in driver.logits[uid]] for uid in (1, 2, 3)
+        }
+        driver.events.clear()
+        driver.add(20, prompt, 3)
+        driver.drain()
+        hit_tokens = [message.next_token for message in driver.events]
+        hit_logits = [value.float().cpu() for value in driver.logits[20]]
+        driver.reset(overlap=True)
+        driver.prefill_budget = 24
+        for uid in (1, 2, 3):
+            driver.add(uid, prompt, 3)
+        driver.step()
+        driver.step()  # all three prefills cached; duplicate physical pages are now free
+        with torch.cuda.stream(driver.stream):
+            driver.cache_manager.free_slots = driver.cache_manager.free_slots.sort().values
+        driver.drain()  # the next decode reuses just-freed duplicate pages for new KV
+        assert_outputs(driver, dict.fromkeys((1, 2, 3), expected_tokens))
+        for uid in (1, 2, 3):
+            for i, (actual, expected) in enumerate(zip(driver.logits[uid], expected_logits[uid])):
+                error = (actual.float().cpu() - expected).abs().max().item()
+                print(f"C7_LOGITS duplicate uid={uid} output={i} max_abs={error}", flush=True)
+                torch.testing.assert_close(actual.float().cpu(), expected, atol=0.1, rtol=0.01)
+        driver.events.clear()
+        driver.traces.clear()
+        driver.add(20, prompt, 3)  # actual radix hit, with the cache preserved
+        driver.drain()
+        assert_outputs(driver, {20: hit_tokens})
+        assert driver.traces[0]["cached_lens"] == (len(prompt) - 1,)
+        for i, (actual, expected) in enumerate(zip(driver.logits[20], hit_logits)):
+            error = (actual.float().cpu() - expected).abs()
+            print(f"C7_HIT_LOGITS output={i} max_abs={error.max().item()} violations={int((error > 0.1 + 0.01 * expected.abs()).sum())}", flush=True)
+        for actual, expected in zip(driver.logits[20], hit_logits):
+>           torch.testing.assert_close(actual.float().cpu(), expected, atol=0.1, rtol=0.01)
+E           AssertionError: Tensor-likes are not close!
+E
+E           Mismatched elements: 1512 / 151936 (1.0%)
+E           Greatest absolute difference: 0.21875 at index (132003,) (up to 0.1 allowed)
+E           Greatest relative difference: 143.66976928710938 at index (4654,) (up to 0.01 allowed)
+
+tests/engine/test_mixed_execution.py:314: AssertionError
+=============================== warnings summary ===============================
+tests/engine/test_mixed_execution.py::test_mixed_sampling_rows_intermediate_writeback_and_graph_padding[False]
+  /home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/flashinfer/fused_moe/cute_dsl/blackwell/blockscaled_contiguous_gather_grouped_gemm_act_fusion.py:3197: DeprecationWarning: cutlass.utils.LayoutEnum is deprecated; use cutlass.tensor_utils.LayoutEnum instead. It will be removed in a future release.
+    c_layout: utils.LayoutEnum,
+
+tests/engine/test_mixed_execution.py::test_mixed_sampling_rows_intermediate_writeback_and_graph_padding[False]
+  /home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/flashinfer/gemm/kernels/grouped_gemm_masked_blackwell.py:429: DeprecationWarning: cutlass.utils.LayoutEnum is deprecated; use cutlass.tensor_utils.LayoutEnum instead. It will be removed in a future release.
+    epi_layout: utils.LayoutEnum,
+
+tests/engine/test_mixed_execution.py::test_mixed_sampling_rows_intermediate_writeback_and_graph_padding[False]
+  /home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/flashinfer/gemm/kernels/grouped_gemm_masked_blackwell.py:2393: DeprecationWarning: cutlass.utils.LayoutEnum is deprecated; use cutlass.tensor_utils.LayoutEnum instead. It will be removed in a future release.
+    c_layout: utils.LayoutEnum,
+
+tests/engine/test_mixed_execution.py::test_mixed_sampling_rows_intermediate_writeback_and_graph_padding[False]
+tests/engine/test_mixed_execution.py::test_mixed_sampling_rows_intermediate_writeback_and_graph_padding[False]
+  /home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/flashinfer/gdn_kernels/blackwell/gated_delta_net_chunked.py:95: DeprecationWarning: cutlass.utils.TensorMapUpdateMode is deprecated; use cutlass.tensor_utils.TensorMapUpdateMode instead. It will be removed in a future release.
+    from cutlass.utils import TensorMapManager, TensorMapUpdateMode
+
+tests/engine/test_mixed_execution.py::test_mixed_sampling_rows_intermediate_writeback_and_graph_padding[False]
+  /home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/flashinfer/gdn_kernels/delta_rule_dsl/collective_store_tma.py:6: DeprecationWarning: cutlass.utils.tensormap_manager.TensorMapUpdateMode is deprecated; use cutlass.tensor_utils.TensorMapUpdateMode instead. It will be removed in a future release.
+    from cutlass.utils.tensormap_manager import TensorMapManager, TensorMapUpdateMode
+
+tests/engine/test_mixed_execution.py::test_mixed_sampling_rows_intermediate_writeback_and_graph_padding[False]
+  /home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/flashinfer/cute_dsl/utils.py:86: DeprecationWarning: Arch from arch.py is deprecated. Use Arch from enums.py instead.
+    from cutlass.base_dsl.arch import Arch
+
+tests/engine/test_mixed_execution.py::test_mixed_sampling_rows_intermediate_writeback_and_graph_padding[False]
+  /home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/flashinfer/norm/kernels/rmsnorm.py:267: DeprecationWarning: cutlass.utils.smem_allocator.SmemAllocator is deprecated; use cutlass.memory.SmemAllocator instead. It will be removed in a future release.
+    smem = cutlass.utils.SmemAllocator()
+
+tests/engine/test_mixed_execution.py::test_mixed_sampling_rows_intermediate_writeback_and_graph_padding[False]
+  /home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/flashinfer/norm/kernels/rmsnorm.py:546: DeprecationWarning: cutlass.utils.smem_allocator.SmemAllocator is deprecated; use cutlass.memory.SmemAllocator instead. It will be removed in a future release.
+    smem = cutlass.utils.SmemAllocator()
+
+tests/engine/test_mixed_execution.py::test_mixed_sampling_rows_intermediate_writeback_and_graph_padding[False]
+  /home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/flashinfer/norm/kernels/fused_add_rmsnorm.py:251: DeprecationWarning: cutlass.utils.smem_allocator.SmemAllocator is deprecated; use cutlass.memory.SmemAllocator instead. It will be removed in a future release.
+    smem = cutlass.utils.SmemAllocator()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/engine/test_mixed_execution.py::test_duplicate_prefix_page_reuse_and_prefix_hit_match_baseline_logits
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 7 passed, 10 warnings in 8.75s

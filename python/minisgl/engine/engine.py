@@ -196,10 +196,22 @@ class Engine:
             else:
                 logits = self.model.forward()
 
-        for req in batch.reqs:
-            req.complete_one()
-
-        next_tokens_gpu = self.sampler.sample(logits[: batch.size], args).to(torch.int32)
+        if batch.layout is None:
+            for req in batch.reqs:
+                req.complete_one()
+            next_tokens_gpu = self.sampler.sample(logits[: batch.size], args).to(torch.int32)
+        else:
+            layout = batch.layout
+            for req, length, sample in zip(batch.reqs, layout.kv_lens, layout.sample_mask):
+                req.cached_len = length
+                req.device_len = length + int(sample)
+            sample_size = len(layout.sample_req_indices)
+            assert logits.shape[0] == sample_size, "Logits and sampling rows must match"
+            next_tokens_gpu = (
+                self.sampler.sample(logits, args).to(torch.int32)
+                if sample_size
+                else torch.empty(0, dtype=torch.int32, device=self.device)
+            )
         next_tokens_cpu = next_tokens_gpu.to("cpu", non_blocking=True)
         copy_done_event = torch.cuda.Event()
         copy_done_event.record(self.stream)

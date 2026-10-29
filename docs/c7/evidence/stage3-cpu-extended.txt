@@ -1,0 +1,30 @@
+.............F.......................................................... [100%]
+=================================== FAILURES ===================================
+____ test_duplicate_prefix_remaps_live_page_table_before_freed_pages_reuse _____
+
+scheduler = <minisgl.scheduler.scheduler.Scheduler object at 0x73718b790e60>
+
+    def test_duplicate_prefix_remaps_live_page_table_before_freed_pages_reuse(scheduler):
+        first = prefill(scheduler, uid=1)
+        first_data = submit(scheduler, first, [40])
+        second = prefill(scheduler, uid=2)  # admitted before either prefix was inserted
+        second_data = submit(scheduler, second, [41])
+        old_second_pages = scheduler.engine.page_table[second.reqs[0].table_idx, :3].clone()
+        scheduler._process_last_data(first_data)
+        scheduler._process_last_data(second_data)
+        req = second.reqs[0]
+        canonical = req.cache_handle.get_matched_indices()
+        torch.testing.assert_close(scheduler.engine.page_table[req.table_idx, :3], canonical)
+        assert not torch.equal(canonical, old_second_pages)
+>       assert set(old_second_pages.tolist()) <= set(scheduler.cache_manager.free_slots.tolist())
+E       assert {3, 4, 5} <= {0, 1, 2, 6, 7, 8, ...}
+E
+E         Extra items in the left set:
+E         3
+E         4
+E         5
+
+tests/core/test_mixed_lifecycle.py:287: AssertionError
+=========================== short test summary info ============================
+FAILED tests/core/test_mixed_lifecycle.py::test_duplicate_prefix_remaps_live_page_table_before_freed_pages_reuse
+1 failed, 71 passed in 3.88s

@@ -1,0 +1,12 @@
+All done! ✨ 🍰 ✨
+14 files would be left unchanged.
+All checks passed!
+git diff --check: PASS
+Core dependency freeze unchanged: PASS
+GraphRunner/CacheManager/PrefixCache/PrefillAdder/DecodeManager/config defaults unchanged: PASS
+stage3-cpu-tests.txt: completed with expected passing count, no skips
+stage3-execution-tests.txt: completed with expected passing count, no skips
+stage3-attention-tests.txt: completed with expected passing count, no skips
+Raw prefix strict numerical comparison: FAIL retained explicitly; NOT counted as a numerical PASS
+Canonical-KV diagnostic control: three outputs bitwise equal
+git diff --cached --check: PASS

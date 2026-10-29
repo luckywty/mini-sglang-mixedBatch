@@ -89,7 +89,9 @@ class ParallelLMHead(VocabParallelEmbedding):
         ctx = get_global_ctx()
         batch = ctx.batch
         bs = batch.size
-        if batch.is_prefill:
+        if batch.layout is not None and not batch.is_decode:
+            x = x.index_select(0, batch.sample_hidden_indices).contiguous()
+        elif batch.is_prefill:
             indices = batch.attn_metadata.get_last_indices(bs)
             x = x[indices].contiguous()
             del indices

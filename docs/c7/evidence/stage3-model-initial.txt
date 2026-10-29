@@ -1,0 +1,16 @@
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[1m[2026-10-28|21:13:23|core|rank=0][0m [32mINFO    [0m Free memory before loading model: 4.99 GiB
+Loading weights:   0%|          | 0/1 [00:00<?, ?it/s]Loading weights: 100%|██████████| 1/1 [00:06<00:00,  6.13s/it]Loading weights: 100%|██████████| 1/1 [00:06<00:00,  6.13s/it]
+[1m[2026-10-28|21:13:30|core|rank=0][0m [32mINFO    [0m Allocating 512 tokens for KV cache, K + V = 0.05 GiB
+[1m[2026-10-28|21:13:30|core|rank=0][0m [32mINFO    [0m Free memory after initialization: 3.60 GiB
+[1m[2026-10-28|21:13:30|core|rank=0][0m [32mINFO    [0m CUDA graph is disabled.
+C7_FORWARD {"phase": "prefill", "uids": [0, 1], "query_lens": [5, 11], "sample_mask": [true, false], "graph": false, "sample_count": 1}
+C7_FORWARD {"phase": "mixed", "uids": [0, 1], "query_lens": [1, 15], "sample_mask": [true, false], "graph": false, "sample_count": 1}
+C7_FORWARD {"phase": "mixed", "uids": [0, 1], "query_lens": [1, 15], "sample_mask": [true, false], "graph": false, "sample_count": 1}
+C7_FORWARD {"phase": "mixed", "uids": [0, 1], "query_lens": [1, 15], "sample_mask": [true, false], "graph": false, "sample_count": 1}
+C7_FORWARD {"phase": "prefill", "uids": [1], "query_lens": [5], "sample_mask": [true], "graph": false, "sample_count": 1}
+C7_FORWARD {"phase": "decode", "uids": [1], "query_lens": [1], "sample_mask": [true], "graph": false, "sample_count": 1}
+C7_FORWARD {"phase": "decode", "uids": [1], "query_lens": [1], "sample_mask": [true], "graph": false, "sample_count": 1}
+C7_FORWARD {"phase": "decode", "uids": [1], "query_lens": [1], "sample_mask": [true], "graph": false, "sample_count": 1}
+C7_OUTPUT [{"text": " Paris. The capital", "token_ids": [12095, 13, 576, 6722]}, {"text": " Repeat the word hello", "token_ids": [44801, 279, 3409, 23811]}]
+C7_MODEL_SMOKE PASS {"model": "/home/wty238388/ai-infra/models/Qwen3-0.6B", "mixed": true, "disable_overlap": true, "graph_bs": []}
