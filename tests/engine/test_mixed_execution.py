@@ -25,7 +25,8 @@ pytestmark = pytest.mark.skipif(
 
 
 class Driver(Scheduler):
-    def __init__(self):
+    def __init__(self, *, mixed=True, graph_bs=None, max_seq_len=128, pages=768, budget=8):
+        self.initial_mixed, self.initial_budget = mixed, budget
         self.inbox, self.events, self.traces = [], [], []
         self.pending_data = None
         self.overlap = True
@@ -40,13 +41,13 @@ class Driver(Scheduler):
                 tp_info=DistributedInfo(0, 1),
                 dtype=torch.bfloat16,
                 max_running_req=3,
-                max_seq_len_override=128,
-                num_page_override=768,
-                max_extend_tokens=8,
+                max_seq_len_override=max_seq_len,
+                num_page_override=pages,
+                max_extend_tokens=budget,
                 attention_backend="fi",
                 page_size=1,
-                cuda_graph_bs=[2],
-                enable_mixed_batching=True,
+                cuda_graph_bs=[2] if graph_bs is None else graph_bs,
+                enable_mixed_batching=mixed,
                 offline_mode=True,
             )
         )
@@ -155,7 +156,8 @@ class Driver(Scheduler):
     def check_resources(self):
         torch.cuda.synchronize()
         assert self.pending_data is None
-        assert not self.mixed_lifecycle.active
+        if hasattr(self, "mixed_lifecycle"):
+            assert not self.mixed_lifecycle.active
         assert self.table_manager.available_size == 3
         cm = self.cache_manager
         cm.check_integrity()
@@ -184,12 +186,13 @@ class Driver(Scheduler):
                 expected.extend(sequence[cached : cached + length])
             assert packed.cpu().tolist() == expected
 
-    def reset(self, overlap=True):
+    def reset(self, overlap=True, *, keep_cache=False):
         self.check_resources()
         cm = self.cache_manager
         with torch.cuda.stream(self.stream):
-            evicted = cm.prefix_cache.evict(cm.prefix_cache.evictable_size)
-            cm.free_slots = torch.cat([cm.free_slots, evicted])
+            if not keep_cache:
+                evicted = cm.prefix_cache.evict(cm.prefix_cache.evictable_size)
+                cm.free_slots = torch.cat([cm.free_slots, evicted])
             self.token_pool[:-1].fill_(-777)  # leave graph dummy input at token 0
         self.inbox.clear()
         self.events.clear()
@@ -202,8 +205,8 @@ class Driver(Scheduler):
         self.prompts.clear()
         self.accepted_tokens.clear()
         self.input_snapshots.clear()
-        self.overlap, self.forced, self.prefill_budget = overlap, None, 8
-        self.enable_mixed_batching = True
+        self.overlap, self.forced, self.prefill_budget = overlap, None, self.initial_budget
+        self.enable_mixed_batching = self.initial_mixed
 
 
 @pytest.fixture(scope="module")

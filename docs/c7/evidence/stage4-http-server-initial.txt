@@ -1,0 +1,23 @@
+[1m[2026-10-29|12:06:18][0m [32mINFO    [0m Parsed arguments:
+ServerArgs(model_path='/home/wty238388/ai-infra/models/Qwen3-0.6B', tp_info=DistributedInfo(rank=0, size=1), dtype=torch.bfloat16, max_running_req=3, attention_backend='fi', moe_backend='auto', cuda_graph_bs=None, cuda_graph_max_bs=0, page_size=1, memory_ratio=0.9, distributed_timeout=60.0, use_dummy_weight=False, use_pynccl=True, max_seq_len_override=128, num_page_override=768, max_extend_tokens=7, cache_type='radix', offline_mode=False, enable_mixed_batching=True, _unique_suffix='.pid=10889', server_host='127.0.0.1', server_port=48173, num_tokenizer=0, silent_output=False)
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[1m[2026-10-29|12:06:21|core|rank=0][0m [32mINFO    [0m Free memory before loading model: 4.99 GiB
+[1m[2026-10-29|12:06:21|initializer][0m [32mINFO    [0m Tokenize server 0 is ready
+Loading weights:   0%|          | 0/1 [00:00<?, ?it/s]Loading weights: 100%|██████████| 1/1 [00:01<00:00,  1.18s/it]Loading weights: 100%|██████████| 1/1 [00:01<00:00,  1.18s/it]
+[1m[2026-10-29|12:06:23|core|rank=0][0m [32mINFO    [0m Allocating 768 tokens for KV cache, K + V = 0.08 GiB
+[1m[2026-10-29|12:06:23|core|rank=0][0m [32mINFO    [0m Free memory after initialization: 3.57 GiB
+[1m[2026-10-29|12:06:23|core|rank=0][0m [32mINFO    [0m CUDA graph is disabled.
+[1m[2026-10-29|12:06:24|core|rank=0][0m [32mINFO    [0m Scheduler is idle, waiting for new reqs...
+[1m[2026-10-29|12:06:24|initializer][0m [32mINFO    [0m Scheduler is ready
+[1m[2026-10-29|12:06:24|FrontendAPI][0m [32mINFO    [0m API server is ready to serve on 127.0.0.1:48173
+INFO:     Started server process [10889]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:48173 (Press CTRL+C to quit)
+INFO:     127.0.0.1:3514 - "GET /v1 HTTP/1.1" 200 OK
+
+[1m[2026-10-29|12:06:24|core|rank=0][0m [32mINFO    [0m Scheduler exiting gracefully...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [10889]

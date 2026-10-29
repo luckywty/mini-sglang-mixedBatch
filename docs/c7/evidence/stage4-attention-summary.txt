@@ -1,0 +1,59 @@
+{
+  "log": "docs/c7/evidence/stage4-attention-tests.txt",
+  "pytest_summary": "22 passed, 7 warnings in 5.66s",
+  "comparison_count": 39,
+  "tolerance": "abs(actual-reference) <= 0.02 + 0.02 * abs(reference)",
+  "violating_elements": 0,
+  "peak_allocated_bytes": 483275264,
+  "peak_reserved_bytes": 520093696,
+  "groups": {
+    "mixed": {
+      "comparisons": 12,
+      "max_abs": 0.009405851364135742,
+      "max_of_per_comparison_abs_p99": 0.004119596444070339,
+      "max_relative_floor_1e-6": 155.43496704101562
+    },
+    "mixed-vs-individual": {
+      "comparisons": 6,
+      "max_abs": 0.0078125,
+      "max_of_per_comparison_abs_p99": 0.0009765625,
+      "max_relative_floor_1e-6": 18.661691665649414
+    },
+    "history-perturbation": {
+      "comparisons": 1,
+      "max_abs": 0.015962600708007812,
+      "max_of_per_comparison_abs_p99": 0.012537523172795773,
+      "max_relative_floor_1e-6": 4.537167549133301
+    },
+    "causal": {
+      "comparisons": 1,
+      "max_abs": 0.026784896850585938,
+      "max_of_per_comparison_abs_p99": 0.026784896850585938,
+      "max_relative_floor_1e-6": 0.0018749426817521453
+    },
+    "plan-reuse": {
+      "comparisons": 6,
+      "max_abs": 0.007947444915771484,
+      "max_of_per_comparison_abs_p99": 0.0038892687298357487,
+      "max_relative_floor_1e-6": 500.3771057128906
+    },
+    "radix-hit": {
+      "comparisons": 4,
+      "max_abs": 0.006507158279418945,
+      "max_of_per_comparison_abs_p99": 0.0038808202371001244,
+      "max_relative_floor_1e-6": 28.52252960205078
+    },
+    "deferred": {
+      "comparisons": 8,
+      "max_abs": 0.008120298385620117,
+      "max_of_per_comparison_abs_p99": 0.003995606210082769,
+      "max_relative_floor_1e-6": 257.779296875
+    },
+    "attention-layer": {
+      "comparisons": 1,
+      "max_abs": 0.00416254997253418,
+      "max_of_per_comparison_abs_p99": 0.002043923130258918,
+      "max_relative_floor_1e-6": 4.09542179107666
+    }
+  }
+}

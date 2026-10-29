@@ -1,0 +1,22 @@
+[
+  {
+    "name": "baseline-logits",
+    "command": [
+      "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/bin/python",
+      "-u",
+      "scripts/c7/diagnose_logits.py",
+      "--model",
+      "/home/wty238388/ai-infra/models/Qwen3-0.6B"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "prefix-kv",
+    "command": [
+      "/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/bin/python",
+      "-u",
+      "scripts/c7/diagnose_prefix_logits.py"
+    ],
+    "exit_code": 1
+  }
+]

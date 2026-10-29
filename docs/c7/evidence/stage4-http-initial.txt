@@ -1,0 +1,19 @@
+C7_HTTP_COMMAND ["/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/bin/python", "-u", "scripts/c7/stage4_http_server.py", "--model", "/home/wty238388/ai-infra/models/Qwen3-0.6B", "--dtype", "bfloat16", "--attention-backend", "fi", "--page-size", "1", "--tp-size", "1", "--enable-mixed-batching", "--max-running-requests", "3", "--max-seq-len-override", "128", "--max-extend-length", "7", "--num-pages", "768", "--graph", "0", "--host", "127.0.0.1", "--port", "48173"]
+Traceback (most recent call last):
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/scripts/c7/stage4_http.py", line 135, in <module>
+    main()
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/scripts/c7/stage4_http.py", line 120, in main
+    results = asyncio.run(exercise(url, server_log))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/wty238388/.local/share/uv/python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/home/wty238388/.local/share/uv/python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/wty238388/.local/share/uv/python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/wty238388/ai-infra/Serving_V1/mini-sglang-mixedBatch/scripts/c7/stage4_http.py", line 31, in exercise
+    import httpx
+ModuleNotFoundError: No module named 'httpx'

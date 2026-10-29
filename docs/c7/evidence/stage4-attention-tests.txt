@@ -1,0 +1,90 @@
+C7_NUMERIC {"name": "mixed/seed=20261028/layer=0", "max_abs": 0.00799870491027832, "abs_p50_p95_p99": [0.0002539046108722687, 0.001090100035071373, 0.0019349921494722366], "max_relative_floor_1e-6": 155.43496704101562, "violations": 0, "atol": 0.02, "rtol": 0.02}
+C7_NUMERIC {"name": "mixed/seed=20261028/layer=1", "max_abs": 0.009405851364135742, "abs_p50_p95_p99": [0.0002598501741886139, 0.001139819622039795, 0.0021542366594076157], "max_relative_floor_1e-6": 94.9437484741211, "violations": 0, "atol": 0.02, "rtol": 0.02}
+C7_NUMERIC {"name": "mixed-vs-individual/seed=20261028", "max_abs": 0.0078125, "abs_p50_p95_p99": [0.0, 0.00045555830001831055, 0.0009765625], "max_relative_floor_1e-6": 15.190744400024414, "violations": 0, "atol": 0.02, "rtol": 0.02}
+.C7_MEMORY {"peak_allocated_bytes": 218382336, "peak_reserved_bytes": 228589568}
+C7_NUMERIC {"name": "mixed/seed=7/layer=0", "max_abs": 0.008126258850097656, "abs_p50_p95_p99": [0.0002537369728088379, 0.0010807812213897705, 0.0019339071586728096], "max_relative_floor_1e-6": 90.37226104736328, "violations": 0, "atol": 0.02, "rtol": 0.02}
+C7_NUMERIC {"name": "mixed/seed=7/layer=1", "max_abs": 0.007772207260131836, "abs_p50_p95_p99": [0.0002572089433670044, 0.0011308169923722744, 0.0021719681099057198], "max_relative_floor_1e-6": 42.19039535522461, "violations": 0, "atol": 0.02, "rtol": 0.02}
+C7_NUMERIC {"name": "mixed-vs-individual/seed=7", "max_abs": 0.0078125, "abs_p50_p95_p99": [0.0, 0.0003662109375, 0.0009765625], "max_relative_floor_1e-6": 18.661691665649414, "violations": 0, "atol": 0.02, "rtol": 0.02}
+.C7_MEMORY {"peak_allocated_bytes": 218382848, "peak_reserved_bytes": 228589568}
+C7_NUMERIC {"name": "mixed/seed=11/layer=0", "max_abs": 0.0034166574478149414, "abs_p50_p95_p99": [0.0005204677581787109, 0.0017120152479037642, 0.0020206188783049583], "max_relative_floor_1e-6": 0.865400493144989, "violations": 0, "atol": 0.02, "rtol": 0.02}
+C7_NUMERIC {"name": "mixed/seed=11/layer=1", "max_abs": 0.004620790481567383, "abs_p50_p95_p99": [0.0010970532894134521, 0.0032900571823120117, 0.003839195938780904], "max_relative_floor_1e-6": 0.6993215084075928, "violations": 0, "atol": 0.02, "rtol": 0.02}
+C7_NUMERIC {"name": "mixed-vs-individual/seed=11", "max_abs": 0.0, "abs_p50_p95_p99": [0.0, 0.0, 0.0], "max_relative_floor_1e-6": 0.0, "violations": 0, "atol": 0.02, "rtol": 0.02}
+.C7_MEMORY {"peak_allocated_bytes": 218382848, "peak_reserved_bytes": 228589568}
+C7_NUMERIC {"name": "mixed/seed=17/layer=0", "max_abs": 0.007755279541015625, "abs_p50_p95_p99": [0.0006160438060760498, 0.00270224642008543, 0.0037372210063040257], "max_relative_floor_1e-6": 4.651126861572266, "violations": 0, "atol": 0.02, "rtol": 0.02}
+C7_NUMERIC {"name": "mixed/seed=17/layer=1", "max_abs": 0.008332967758178711, "abs_p50_p95_p99": [0.0007265284657478333, 0.0033652600832283497, 0.00395235326141119], "max_relative_floor_1e-6": 3.0775113105773926, "violations": 0, "atol": 0.02, "rtol": 0.02}
+C7_NUMERIC {"name": "mixed-vs-individual/seed=17", "max_abs": 0.0, "abs_p50_p95_p99": [0.0, 0.0, 0.0], "max_relative_floor_1e-6": 0.0, "violations": 0, "atol": 0.02, "rtol": 0.02}
+.C7_MEMORY {"peak_allocated_bytes": 218382848, "peak_reserved_bytes": 228589568}
+C7_NUMERIC {"name": "mixed/seed=23/layer=0", "max_abs": 0.004676103591918945, "abs_p50_p95_p99": [0.0006403625011444092, 0.0027345241978764534, 0.0037256604991853237], "max_relative_floor_1e-6": 3.76538348197937, "violations": 0, "atol": 0.02, "rtol": 0.02}
+C7_NUMERIC {"name": "mixed/seed=23/layer=1", "max_abs": 0.008148193359375, "abs_p50_p95_p99": [0.001141369342803955, 0.003561174962669611, 0.004119596444070339], "max_relative_floor_1e-6": 1.4170118570327759, "violations": 0, "atol": 0.02, "rtol": 0.02}
+C7_NUMERIC {"name": "mixed-vs-individual/seed=23", "max_abs": 0.0, "abs_p50_p95_p99": [0.0, 0.0, 0.0], "max_relative_floor_1e-6": 0.0, "violations": 0, "atol": 0.02, "rtol": 0.02}
+.C7_MEMORY {"peak_allocated_bytes": 218382848, "peak_reserved_bytes": 228589568}
+C7_NUMERIC {"name": "mixed/seed=29/layer=0", "max_abs": 0.004295706748962402, "abs_p50_p95_p99": [0.0006332993507385254, 0.00194102234672755, 0.0030776397325098515], "max_relative_floor_1e-6": 7.756951332092285, "violations": 0, "atol": 0.02, "rtol": 0.02}
+C7_NUMERIC {"name": "mixed/seed=29/layer=1", "max_abs": 0.004445791244506836, "abs_p50_p95_p99": [0.0010805726051330566, 0.0034057260490953922, 0.00388460885733366], "max_relative_floor_1e-6": 0.4067332446575165, "violations": 0, "atol": 0.02, "rtol": 0.02}
+C7_NUMERIC {"name": "mixed-vs-individual/seed=29", "max_abs": 0.0, "abs_p50_p95_p99": [0.0, 0.0, 0.0], "max_relative_floor_1e-6": 0.0, "violations": 0, "atol": 0.02, "rtol": 0.02}
+.C7_MEMORY {"peak_allocated_bytes": 218382848, "peak_reserved_bytes": 228589568}
+C7_NUMERIC {"name": "history-perturbation/no-cross-request", "max_abs": 0.015962600708007812, "abs_p50_p95_p99": [0.0006872713565826416, 0.0064390418119728565, 0.012537523172795773], "max_relative_floor_1e-6": 4.537167549133301, "violations": 0, "atol": 0.02, "rtol": 0.02}
+.C7_MEMORY {"peak_allocated_bytes": 218382848, "peak_reserved_bytes": 228589568}
+C7_NUMERIC {"name": "causal/future-value-100", "max_abs": 0.026784896850585938, "abs_p50_p95_p99": [0.0, 0.026784896850585938, 0.026784896850585938], "max_relative_floor_1e-6": 0.0018749426817521453, "violations": 0, "atol": 0.02, "rtol": 0.02}
+.C7_MEMORY {"peak_allocated_bytes": 218382848, "peak_reserved_bytes": 228589568}
+C7_NUMERIC {"name": "plan-reuse/round=0/layer=0", "max_abs": 0.007881402969360352, "abs_p50_p95_p99": [0.0004795342683792114, 0.0018197981407865882, 0.002787364646792412], "max_relative_floor_1e-6": 1.0506632328033447, "violations": 0, "atol": 0.02, "rtol": 0.02}
+C7_NUMERIC {"name": "plan-reuse/round=0/layer=1", "max_abs": 0.007029533386230469, "abs_p50_p95_p99": [0.0008589476346969604, 0.003064644057303667, 0.003862651064991951], "max_relative_floor_1e-6": 0.5199716091156006, "violations": 0, "atol": 0.02, "rtol": 0.02}
+C7_NUMERIC {"name": "plan-reuse/round=1/layer=0", "max_abs": 0.0042285919189453125, "abs_p50_p95_p99": [0.0005286037921905518, 0.001766800880432129, 0.002386534120887518], "max_relative_floor_1e-6": 44.328311920166016, "violations": 0, "atol": 0.02, "rtol": 0.02}
+C7_NUMERIC {"name": "plan-reuse/round=1/layer=1", "max_abs": 0.006503105163574219, "abs_p50_p95_p99": [0.0009019747376441956, 0.0032527297735214233, 0.0038892687298357487], "max_relative_floor_1e-6": 1.9792152643203735, "violations": 0, "atol": 0.02, "rtol": 0.02}
+C7_NUMERIC {"name": "plan-reuse/round=2/layer=0", "max_abs": 0.007811784744262695, "abs_p50_p95_p99": [0.00024840235710144043, 0.0010435176081955433, 0.0018406023737043142], "max_relative_floor_1e-6": 337.00042724609375, "violations": 0, "atol": 0.02, "rtol": 0.02}
+C7_NUMERIC {"name": "plan-reuse/round=2/layer=1", "max_abs": 0.007947444915771484, "abs_p50_p95_p99": [0.00024972145911306143, 0.0010519623756408691, 0.0018477514386177063], "max_relative_floor_1e-6": 500.3771057128906, "violations": 0, "atol": 0.02, "rtol": 0.02}
+.C7_MEMORY {"peak_allocated_bytes": 218382848, "peak_reserved_bytes": 228589568}
+C7_NUMERIC {"name": "radix-hit/round=0/layer=0", "max_abs": 0.005480647087097168, "abs_p50_p95_p99": [0.0005168616771697998, 0.0018079903675243258, 0.0022993048187345266], "max_relative_floor_1e-6": 15.302112579345703, "violations": 0, "atol": 0.02, "rtol": 0.02}
+C7_NUMERIC {"name": "radix-hit/round=0/layer=1", "max_abs": 0.006507158279418945, "abs_p50_p95_p99": [0.001059204339981079, 0.003347325138747692, 0.0038808202371001244], "max_relative_floor_1e-6": 28.52252960205078, "violations": 0, "atol": 0.02, "rtol": 0.02}
+C7_NUMERIC {"name": "radix-hit/round=1/layer=0", "max_abs": 0.0040700435638427734, "abs_p50_p95_p99": [0.0004738699644804001, 0.0017213225364685059, 0.002294955076649785], "max_relative_floor_1e-6": 2.68253231048584, "violations": 0, "atol": 0.02, "rtol": 0.02}
+C7_NUMERIC {"name": "radix-hit/round=1/layer=1", "max_abs": 0.0045926570892333984, "abs_p50_p95_p99": [0.0007349252700805664, 0.0025014281272888184, 0.0036344530526548624], "max_relative_floor_1e-6": 6.190512180328369, "violations": 0, "atol": 0.02, "rtol": 0.02}
+.C7_MEMORY {"peak_allocated_bytes": 361124352, "peak_reserved_bytes": 383778816}
+C7_NUMERIC {"name": "deferred/forward=0/layer=0", "max_abs": 0.008120298385620117, "abs_p50_p95_p99": [0.0002541346475481987, 0.0010915696620941162, 0.001946568489074707], "max_relative_floor_1e-6": 135.00318908691406, "violations": 0, "atol": 0.02, "rtol": 0.02}
+C7_NUMERIC {"name": "deferred/forward=1/layer=1", "max_abs": 0.007733821868896484, "abs_p50_p95_p99": [0.0002562999725341797, 0.0011352850124239922, 0.0021835090592503548], "max_relative_floor_1e-6": 257.779296875, "violations": 0, "atol": 0.02, "rtol": 0.02}
+C7_NUMERIC {"name": "deferred/forward=2/layer=0", "max_abs": 0.0038781166076660156, "abs_p50_p95_p99": [0.0004354119300842285, 0.0017604827880859375, 0.0026387572288513184], "max_relative_floor_1e-6": 0.003830713452771306, "violations": 0, "atol": 0.02, "rtol": 0.02}
+C7_NUMERIC {"name": "deferred/forward=3/layer=1", "max_abs": 0.0039026737213134766, "abs_p50_p95_p99": [0.0008539408445358276, 0.003262728452682495, 0.0037443162873387337], "max_relative_floor_1e-6": 0.003805717919021845, "violations": 0, "atol": 0.02, "rtol": 0.02}
+C7_NUMERIC {"name": "deferred/forward=4/layer=0", "max_abs": 0.0044934749603271484, "abs_p50_p95_p99": [0.0008448362350463867, 0.003084975527599454, 0.003773542121052742], "max_relative_floor_1e-6": 2.2660653591156006, "violations": 0, "atol": 0.02, "rtol": 0.02}
+C7_NUMERIC {"name": "deferred/forward=5/layer=1", "max_abs": 0.007994413375854492, "abs_p50_p95_p99": [0.001504361629486084, 0.0036607563961297274, 0.003995606210082769], "max_relative_floor_1e-6": 0.02012869156897068, "violations": 0, "atol": 0.02, "rtol": 0.02}
+C7_NUMERIC {"name": "deferred/forward=6/layer=0", "max_abs": 0.007500171661376953, "abs_p50_p95_p99": [0.00047366321086883545, 0.001837313175201416, 0.002985741011798382], "max_relative_floor_1e-6": 6.240472793579102, "violations": 0, "atol": 0.02, "rtol": 0.02}
+C7_NUMERIC {"name": "deferred/forward=7/layer=1", "max_abs": 0.00766754150390625, "abs_p50_p95_p99": [0.0008309483528137207, 0.002941637532785535, 0.0038364753127098083], "max_relative_floor_1e-6": 10.396507263183594, "violations": 0, "atol": 0.02, "rtol": 0.02}
+.C7_MEMORY {"peak_allocated_bytes": 483275264, "peak_reserved_bytes": 520093696}
+C7_NUMERIC {"name": "attention-layer/absolute-rope-positions", "max_abs": 0.00416254997253418, "abs_p50_p95_p99": [0.0005174577236175537, 0.001716518308967352, 0.002043923130258918], "max_relative_floor_1e-6": 4.09542179107666, "violations": 0, "atol": 0.02, "rtol": 0.02}
+.C7_MEMORY {"peak_allocated_bytes": 218383360, "peak_reserved_bytes": 520093696}
+.C7_MEMORY {"peak_allocated_bytes": 220480512, "peak_reserved_bytes": 520093696}
+.C7_MEMORY {"peak_allocated_bytes": 220480512, "peak_reserved_bytes": 520093696}
+.C7_MEMORY {"peak_allocated_bytes": 220480512, "peak_reserved_bytes": 520093696}
+.C7_MEMORY {"peak_allocated_bytes": 220480512, "peak_reserved_bytes": 520093696}
+.C7_MEMORY {"peak_allocated_bytes": 220480000, "peak_reserved_bytes": 520093696}
+.C7_MEMORY {"peak_allocated_bytes": 220480000, "peak_reserved_bytes": 520093696}
+.C7_MEMORY {"peak_allocated_bytes": 220480000, "peak_reserved_bytes": 520093696}
+.C7_MEMORY {"peak_allocated_bytes": 220480000, "peak_reserved_bytes": 520093696}
+.C7_MEMORY {"peak_allocated_bytes": 220480000, "peak_reserved_bytes": 520093696}
+.C7_MEMORY {"peak_allocated_bytes": 220480000, "peak_reserved_bytes": 520093696}
+
+=============================== warnings summary ===============================
+tests/attention/test_mixed_flashinfer.py::test_mixed_matches_fp32_and_individual_prefills[query_lens0-kv_lens0-phases0-0-20261028]
+  /home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/flashinfer/fused_moe/cute_dsl/blackwell/blockscaled_contiguous_gather_grouped_gemm_act_fusion.py:3197: DeprecationWarning: cutlass.utils.LayoutEnum is deprecated; use cutlass.tensor_utils.LayoutEnum instead. It will be removed in a future release.
+    c_layout: utils.LayoutEnum,
+
+tests/attention/test_mixed_flashinfer.py::test_mixed_matches_fp32_and_individual_prefills[query_lens0-kv_lens0-phases0-0-20261028]
+  /home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/flashinfer/gemm/kernels/grouped_gemm_masked_blackwell.py:429: DeprecationWarning: cutlass.utils.LayoutEnum is deprecated; use cutlass.tensor_utils.LayoutEnum instead. It will be removed in a future release.
+    epi_layout: utils.LayoutEnum,
+
+tests/attention/test_mixed_flashinfer.py::test_mixed_matches_fp32_and_individual_prefills[query_lens0-kv_lens0-phases0-0-20261028]
+  /home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/flashinfer/gemm/kernels/grouped_gemm_masked_blackwell.py:2393: DeprecationWarning: cutlass.utils.LayoutEnum is deprecated; use cutlass.tensor_utils.LayoutEnum instead. It will be removed in a future release.
+    c_layout: utils.LayoutEnum,
+
+tests/attention/test_mixed_flashinfer.py::test_mixed_matches_fp32_and_individual_prefills[query_lens0-kv_lens0-phases0-0-20261028]
+tests/attention/test_mixed_flashinfer.py::test_mixed_matches_fp32_and_individual_prefills[query_lens0-kv_lens0-phases0-0-20261028]
+  /home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/flashinfer/gdn_kernels/blackwell/gated_delta_net_chunked.py:95: DeprecationWarning: cutlass.utils.TensorMapUpdateMode is deprecated; use cutlass.tensor_utils.TensorMapUpdateMode instead. It will be removed in a future release.
+    from cutlass.utils import TensorMapManager, TensorMapUpdateMode
+
+tests/attention/test_mixed_flashinfer.py::test_mixed_matches_fp32_and_individual_prefills[query_lens0-kv_lens0-phases0-0-20261028]
+  /home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/flashinfer/gdn_kernels/delta_rule_dsl/collective_store_tma.py:6: DeprecationWarning: cutlass.utils.tensormap_manager.TensorMapUpdateMode is deprecated; use cutlass.tensor_utils.TensorMapUpdateMode instead. It will be removed in a future release.
+    from cutlass.utils.tensormap_manager import TensorMapManager, TensorMapUpdateMode
+
+tests/attention/test_mixed_flashinfer.py::test_mixed_matches_fp32_and_individual_prefills[query_lens0-kv_lens0-phases0-0-20261028]
+  /home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/lib/python3.12/site-packages/flashinfer/cute_dsl/utils.py:86: DeprecationWarning: Arch from arch.py is deprecated. Use Arch from enums.py instead.
+    from cutlass.base_dsl.arch import Arch
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+22 passed, 7 warnings in 5.66s

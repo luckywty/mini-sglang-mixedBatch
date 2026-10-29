@@ -1,0 +1,7 @@
+{"command": ["uvx", "--offline", "--from", "black==24.10.0", "black", "--check", "scripts/c7/stage4_http.py", "scripts/c7/stage4_http_server.py", "scripts/c7/stage4_matrix.py", "scripts/c7/stage4_numeric.py", "scripts/c7/run_stage4_matrix.py", "scripts/c7/summarize_stage4.py", "tests/engine/test_mixed_execution.py"], "exit_code": 0, "output": "All done! \u2728 \ud83c\udf70 \u2728\n7 files would be left unchanged.\n"}
+{"command": ["uvx", "--offline", "--from", "ruff==0.11.7", "ruff", "check", "scripts/c7/stage4_http.py", "scripts/c7/stage4_http_server.py", "scripts/c7/stage4_matrix.py", "scripts/c7/stage4_numeric.py", "scripts/c7/run_stage4_matrix.py", "scripts/c7/summarize_stage4.py", "tests/engine/test_mixed_execution.py"], "exit_code": 0, "output": "All checks passed!\n"}
+{"command": ["/home/wty238388/ai-infra/Serving_V1/mini-sglang/.venv/bin/python", "-m", "compileall", "-q", "scripts/c7/stage4_http.py", "scripts/c7/stage4_http_server.py", "scripts/c7/stage4_matrix.py", "scripts/c7/stage4_numeric.py", "scripts/c7/run_stage4_matrix.py", "scripts/c7/summarize_stage4.py", "tests/engine/test_mixed_execution.py"], "exit_code": 0, "output": ""}
+{"command": ["git", "diff", "--check"], "exit_code": 0, "output": ""}
+{"command": ["git", "diff", "--exit-code", "ad59360", "--", "python/"], "exit_code": 0, "output": ""}
+{"command": ["diff", "-u", "docs/c7/evidence/dependencies.txt", "docs/c7/evidence/stage4-dependencies.txt"], "exit_code": 0, "output": ""}
+C7_STAGE4_CHECKS_PASS

@@ -1,0 +1,16 @@
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[1m[2026-10-29|12:13:17|core|rank=0][0m [32mINFO    [0m Free memory before loading model: 4.99 GiB
+Loading weights:   0%|          | 0/1 [00:00<?, ?it/s]Loading weights: 100%|██████████| 1/1 [00:00<00:00,  1.04it/s]Loading weights: 100%|██████████| 1/1 [00:00<00:00,  1.04it/s]
+[1m[2026-10-29|12:13:19|core|rank=0][0m [32mINFO    [0m Allocating 768 tokens for KV cache, K + V = 0.08 GiB
+[1m[2026-10-29|12:13:19|core|rank=0][0m [32mINFO    [0m Free memory after initialization: 3.57 GiB
+[1m[2026-10-29|12:13:19|core|rank=0][0m [32mINFO    [0m CUDA graph is disabled.
+BASELINE_ONLY_TOKENS {"single": [{"text": "\n```\n\n", "token_ids": [198, 13874, 19324]}], "batch3": [{"text": "\n```\n\n", "token_ids": [198, 13874, 19324]}, {"text": "\n```\n\n", "token_ids": [198, 13874, 19324]}, {"text": "\n```\n\n", "token_ids": [198, 13874, 19324]}]}
+BASELINE_ONLY_LOGITS {"uid": 0, "step": 0, "max_abs": 0.28125, "violations_atol_0.1_rtol_0.01": 6780, "argmax_equal": true}
+BASELINE_ONLY_LOGITS {"uid": 0, "step": 1, "max_abs": 0.21875, "violations_atol_0.1_rtol_0.01": 2794, "argmax_equal": true}
+BASELINE_ONLY_LOGITS {"uid": 0, "step": 2, "max_abs": 0.2578125, "violations_atol_0.1_rtol_0.01": 3855, "argmax_equal": true}
+BASELINE_ONLY_LOGITS {"uid": 1, "step": 0, "max_abs": 0.28125, "violations_atol_0.1_rtol_0.01": 6780, "argmax_equal": true}
+BASELINE_ONLY_LOGITS {"uid": 1, "step": 1, "max_abs": 0.21875, "violations_atol_0.1_rtol_0.01": 2794, "argmax_equal": true}
+BASELINE_ONLY_LOGITS {"uid": 1, "step": 2, "max_abs": 0.2578125, "violations_atol_0.1_rtol_0.01": 3855, "argmax_equal": true}
+BASELINE_ONLY_LOGITS {"uid": 2, "step": 0, "max_abs": 0.28125, "violations_atol_0.1_rtol_0.01": 6780, "argmax_equal": true}
+BASELINE_ONLY_LOGITS {"uid": 2, "step": 1, "max_abs": 0.21875, "violations_atol_0.1_rtol_0.01": 2794, "argmax_equal": true}
+BASELINE_ONLY_LOGITS {"uid": 2, "step": 2, "max_abs": 0.2578125, "violations_atol_0.1_rtol_0.01": 3855, "argmax_equal": true}

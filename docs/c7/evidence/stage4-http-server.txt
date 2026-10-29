@@ -1,0 +1,152 @@
+[1m[2026-10-29|12:12:02][0m [32mINFO    [0m Parsed arguments:
+ServerArgs(model_path='/home/wty238388/ai-infra/models/Qwen3-0.6B', tp_info=DistributedInfo(rank=0, size=1), dtype=torch.bfloat16, max_running_req=3, attention_backend='fi', moe_backend='auto', cuda_graph_bs=None, cuda_graph_max_bs=0, page_size=1, memory_ratio=0.9, distributed_timeout=60.0, use_dummy_weight=False, use_pynccl=True, max_seq_len_override=128, num_page_override=768, max_extend_tokens=7, cache_type='radix', offline_mode=False, enable_mixed_batching=True, _unique_suffix='.pid=12151', server_host='127.0.0.1', server_port=46419, num_tokenizer=0, silent_output=False)
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[1m[2026-10-29|12:12:07|core|rank=0][0m [32mINFO    [0m Free memory before loading model: 4.99 GiB
+[1m[2026-10-29|12:12:07|initializer][0m [32mINFO    [0m Tokenize server 0 is ready
+Loading weights:   0%|          | 0/1 [00:00<?, ?it/s]Loading weights: 100%|██████████| 1/1 [00:01<00:00,  1.23s/it]Loading weights: 100%|██████████| 1/1 [00:01<00:00,  1.23s/it]
+[1m[2026-10-29|12:12:09|core|rank=0][0m [32mINFO    [0m Allocating 768 tokens for KV cache, K + V = 0.08 GiB
+[1m[2026-10-29|12:12:09|core|rank=0][0m [32mINFO    [0m Free memory after initialization: 3.57 GiB
+[1m[2026-10-29|12:12:09|core|rank=0][0m [32mINFO    [0m CUDA graph is disabled.
+[1m[2026-10-29|12:12:10|core|rank=0][0m [32mINFO    [0m Scheduler is idle, waiting for new reqs...
+[1m[2026-10-29|12:12:10|initializer][0m [32mINFO    [0m Scheduler is ready
+[1m[2026-10-29|12:12:10|FrontendAPI][0m [32mINFO    [0m API server is ready to serve on 127.0.0.1:46419
+INFO:     Started server process [12151]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:46419 (Press CTRL+C to quit)
+INFO:     127.0.0.1:1351 - "GET /v1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:1352 - "GET /v1/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:1354 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:1353 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:1377 - "GET /v1 HTTP/1.1" 200 OK
+C7_HTTP_FORWARD {"phase": "prefill", "uids": [0], "query_lens": [5], "cached_lens": [0], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "mixed", "uids": [0, 1], "query_lens": [1, 6], "cached_lens": [5, 0], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "mixed", "uids": [0, 1], "query_lens": [1, 6], "cached_lens": [6, 6], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "mixed", "uids": [0, 1], "query_lens": [1, 6], "cached_lens": [7, 12], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "mixed", "uids": [0, 1], "query_lens": [1, 6], "cached_lens": [8, 18], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "mixed", "uids": [0, 1], "query_lens": [1, 6], "cached_lens": [9, 24], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "mixed", "uids": [0, 1], "query_lens": [1, 6], "cached_lens": [10, 30], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "mixed", "uids": [0, 1], "query_lens": [1, 6], "cached_lens": [11, 36], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "mixed", "uids": [0, 1], "query_lens": [1, 6], "cached_lens": [12, 42], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "mixed", "uids": [0, 1], "query_lens": [1, 6], "cached_lens": [13, 48], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "mixed", "uids": [0, 1], "query_lens": [1, 6], "cached_lens": [14, 54], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "mixed", "uids": [0, 1], "query_lens": [1, 1], "cached_lens": [15, 60], "sample_count": 2}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0, 1], "query_lens": [1, 1], "cached_lens": [16, 61], "sample_count": 2}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0, 1], "query_lens": [1, 1], "cached_lens": [17, 62], "sample_count": 2}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0, 1], "query_lens": [1, 1], "cached_lens": [18, 63], "sample_count": 2}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [19], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [20], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [21], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [22], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [23], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [24], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [25], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [26], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [27], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [28], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [29], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [30], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [31], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [32], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [33], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [34], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [35], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [36], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [37], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [38], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [39], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [40], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [41], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [42], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [43], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [44], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [45], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [46], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [47], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [48], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [49], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [50], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [51], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [52], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [53], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [54], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [55], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [56], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [57], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [58], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [59], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [60], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [61], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [62], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [63], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [64], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [65], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [66], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [67], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [68], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [69], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [70], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [71], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [72], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [73], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [74], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [75], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [76], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [77], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [78], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [79], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [80], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [81], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [82], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [83], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [84], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [85], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [86], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [87], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [88], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [89], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [90], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [91], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [92], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [93], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [94], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [95], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [96], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [97], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [98], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [0], "query_lens": [1], "cached_lens": [99], "sample_count": 1}
+[1m[2026-10-29|12:12:19|core|rank=0][0m [32mINFO    [0m Scheduler is idle, waiting for new reqs...
+INFO:     127.0.0.1:12530 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+C7_HTTP_FORWARD {"phase": "prefill", "uids": [2], "query_lens": [1], "cached_lens": [4], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [2], "query_lens": [1], "cached_lens": [5], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [2], "query_lens": [1], "cached_lens": [6], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [2], "query_lens": [1], "cached_lens": [7], "sample_count": 1}
+[1m[2026-10-29|12:12:19|core|rank=0][0m [32mINFO    [0m Scheduler is idle, waiting for new reqs...
+C7_HTTP_FORWARD {"phase": "prefill", "uids": [3], "query_lens": [1], "cached_lens": [4], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [3], "query_lens": [1], "cached_lens": [5], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [3], "query_lens": [1], "cached_lens": [6], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [3], "query_lens": [1], "cached_lens": [7], "sample_count": 1}
+[1m[2026-10-29|12:12:19|core|rank=0][0m [32mINFO    [0m Scheduler is idle, waiting for new reqs...
+INFO:     127.0.0.1:12531 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:12532 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+C7_HTTP_FORWARD {"phase": "prefill", "uids": [4], "query_lens": [1], "cached_lens": [60], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [4], "query_lens": [1], "cached_lens": [61], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [4], "query_lens": [1], "cached_lens": [62], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [4], "query_lens": [1], "cached_lens": [63], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [4], "query_lens": [1], "cached_lens": [64], "sample_count": 1}
+[1m[2026-10-29|12:12:19|FrontendAPI][0m [33mWARNING [0m Aborting request for user 4
+C7_HTTP_FORWARD {"phase": "decode", "uids": [4], "query_lens": [1], "cached_lens": [65], "sample_count": 1}
+C7_HTTP_ABORT {"uid": 4, "was_active": true, "remaining_active": 0, "free_slots": 3}
+[1m[2026-10-29|12:12:19|core|rank=0][0m [32mINFO    [0m Scheduler is idle, waiting for new reqs...
+C7_HTTP_FORWARD {"phase": "prefill", "uids": [5], "query_lens": [1], "cached_lens": [4], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [5], "query_lens": [1], "cached_lens": [5], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [5], "query_lens": [1], "cached_lens": [6], "sample_count": 1}
+C7_HTTP_FORWARD {"phase": "decode", "uids": [5], "query_lens": [1], "cached_lens": [7], "sample_count": 1}
+[1m[2026-10-29|12:12:19|core|rank=0][0m [32mINFO    [0m Scheduler is idle, waiting for new reqs...
+INFO:     127.0.0.1:12533 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+
+[1m[2026-10-29|12:12:19|core|rank=0][0m [32mINFO    [0m Scheduler exiting gracefully...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [12151]
